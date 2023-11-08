@@ -1,4 +1,4 @@
-package com.example.cinema.entity;
+package com.example.cinema.pojo.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

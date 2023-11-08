@@ -1,7 +1,7 @@
 package com.example.cinema.controller;
 
-import com.example.cinema.dto.AuthenticationResponse;
-import com.example.cinema.dto.RegisterRequest;
+import com.example.cinema.pojo.responses.AuthenticationResponse;
+import com.example.cinema.pojo.requests.RegisterRequest;
 import com.example.cinema.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

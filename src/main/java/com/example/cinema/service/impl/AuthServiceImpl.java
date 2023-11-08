@@ -1,9 +1,9 @@
 package com.example.cinema.service.impl;
 
-import com.example.cinema.dto.AuthenticationResponse;
-import com.example.cinema.dto.RegisterRequest;
-import com.example.cinema.entity.Role;
-import com.example.cinema.entity.User;
+import com.example.cinema.pojo.responses.AuthenticationResponse;
+import com.example.cinema.pojo.requests.RegisterRequest;
+import com.example.cinema.pojo.entity.Role;
+import com.example.cinema.pojo.entity.User;
 import com.example.cinema.repository.RoleRepository;
 import com.example.cinema.repository.UserRepository;
 import com.example.cinema.security.JwtTokenProvider;

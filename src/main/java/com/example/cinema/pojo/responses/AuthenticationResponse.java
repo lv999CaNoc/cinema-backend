@@ -1,4 +1,4 @@
-package com.example.cinema.dto;
+package com.example.cinema.pojo.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
-    private String username;
-    private String password;
+public class AuthenticationResponse {
+    private String token;
 }

@@ -1,6 +1,10 @@
-package com.example.cinema.entity;
+package com.example.cinema.pojo.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,10 +26,16 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false, unique = true)
+    @Size(min = 4, message = "Username tối thiểu 4 ký tự")
+    @Size(max = 20, message = "Username tối đa 10 ký tự")
     private String username;
+
     @Column(nullable = false)
+    @Size(min = 6, message = "Mật khẩu phải dài ít nhất 6 ký tự")
     private String password;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "users_roles",
@@ -34,6 +44,28 @@ public class User implements UserDetails {
     )
     private Set<Role> roles = new HashSet<>();
 
+    @Column(nullable = false)
+    @NotBlank(message = "Hãy nhập địa chỉ email của bạn")
+    @Email(message = "Vui lòng nhập địa chỉ email hợp lệ")
+    private String email;
+
+    @Pattern(regexp = "\\d{10}", message = "Vui lòng nhập 10 chữ số.")
+    private String phoneNumber;
+
+    @Size(max = 10, message = "Nhập tối đa 10 ký tự")
+    @NotBlank(message = "Hãy nhập tên của bạn")
+    private String firstName;
+
+    @Size(max = 10, message = "Nhập tối đa 10 ký tự")
+    @NotBlank(message = "Hãy nhập họ của bạn")
+    private String lastName;
+
+    @Column(name = "enabled", nullable = false)
+    private boolean isEnabled;
+
+    @Column(name = "locked", nullable = false)
+    private boolean isLocked;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toSet());
@@ -41,12 +73,12 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return null;
+        return username;
     }
 
     @Override
@@ -56,7 +88,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !isLocked;
     }
 
     @Override
@@ -66,6 +98,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isEnabled;
     }
+
 }
