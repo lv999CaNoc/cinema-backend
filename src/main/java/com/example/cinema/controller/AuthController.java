@@ -1,6 +1,6 @@
 package com.example.cinema.controller;
 
-import com.example.cinema.pojo.responses.AuthenticationResponse;
+import com.example.cinema.pojo.requests.LoginRequest;
 import com.example.cinema.pojo.requests.RegisterRequest;
 import com.example.cinema.service.AuthService;
 import jakarta.validation.Valid;
@@ -16,8 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class AuthController {
     private AuthService authService;
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request){
+        return authService.login(request);
+    }
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody RegisterRequest request){
-        return ResponseEntity.ok(authService.register(request));
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request){
+        return authService.register(request);
     }
 }

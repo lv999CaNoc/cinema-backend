@@ -1,14 +1,16 @@
 package com.example.cinema.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+@AllArgsConstructor
+@Getter
 public class CinemaException extends RuntimeException{
-    private String message;
+    private ExceptionCode exceptionCode;
+    private Object[] args;
 
-    public CinemaException(String message){
-        super(message);
-        this.message = message;
+    public CinemaException(ExceptionCode exceptionCode) {
+        super(exceptionCode.getMessage());
+        this.exceptionCode = exceptionCode;
     }
 }
