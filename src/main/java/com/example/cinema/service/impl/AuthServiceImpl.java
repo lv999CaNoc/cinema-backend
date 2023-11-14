@@ -17,13 +17,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
+
 
 @Service
 @AllArgsConstructor
@@ -40,17 +41,14 @@ public class AuthServiceImpl implements AuthService {
     private JwtTokenProvider jwtTokenProvider;
 
     public ResponseEntity<?> register(RegisterRequest request) {
-        Optional<User> user = userRepository.findByUsername(request.getUsername());
-        if(user.isPresent()) {
-            if(request.getUsername().equals(user.get().getUsername())){
-                throw new CinemaException(ExceptionCode.USERNAME_ALREADY_EXIST);
-            }
-            if(request.getEmail().equals(user.get().getEmail())) {
-                throw new CinemaException(ExceptionCode.EMAIL_ALREADY_EXIST);
-            }
-            if(request.getPhoneNumber().equals(user.get().getPhoneNumber())) {
-                throw new CinemaException(ExceptionCode.PHONE_ALREADY_EXIST);
-            }
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new CinemaException(ExceptionCode.USERNAME_ALREADY_EXIST);
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new CinemaException(ExceptionCode.EMAIL_ALREADY_EXIST);
+        }
+        if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
+            throw new CinemaException(ExceptionCode.PHONE_ALREADY_EXIST);
         }
         Role role = roleRepository.findByName("ROLE_USER");
         Set<Role> roles = new HashSet<>();
@@ -73,11 +71,18 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseEntity<?> login(LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        AuthenticationResponse response = AuthenticationResponse.builder()
-                .token(jwtTokenProvider.generateToken(authentication))
-                .build();
-        return ResponseEntity.ok(BaseResponse.of(response));
+        try{
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+            AuthenticationResponse authResponse = AuthenticationResponse.builder()
+                    .token(jwtTokenProvider.generateToken(authentication))
+                    .build();
+            return ResponseEntity.ok(BaseResponse.of(authResponse));
+        }catch (AuthenticationException exception){
+            throw new CinemaException(ExceptionCode.INVALID_CREDENTIALS);
+        }
+    }
+
+    private ResponseEntity<?> response(Object object) {
+        return ResponseEntity.ok(BaseResponse.of(object));
     }
 }

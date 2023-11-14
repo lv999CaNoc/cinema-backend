@@ -25,5 +25,5 @@ public class Room {
     @ManyToOne
     @JoinColumn(nullable = false, name = "theater_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Theaters theater;
+    private Theater theater;
 }

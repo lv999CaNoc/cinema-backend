@@ -76,7 +76,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .timestamp(LocalDateTime.now())
                 .message(exception.getMessage())
                 .path(webRequest.getDescription(false))
-                .errorCode(null)
+                .errorCode(HttpStatus.UNAUTHORIZED.toString())
                 .build();
         return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }

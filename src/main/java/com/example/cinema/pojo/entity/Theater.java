@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Theaters {
+public class Theater {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
