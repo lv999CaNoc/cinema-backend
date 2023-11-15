@@ -71,13 +71,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseEntity<?> login(LoginRequest request) {
-        try{
+        try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
             AuthenticationResponse authResponse = AuthenticationResponse.builder()
                     .token(jwtTokenProvider.generateToken(authentication))
                     .build();
             return ResponseEntity.ok(BaseResponse.of(authResponse));
-        }catch (AuthenticationException exception){
+        } catch (AuthenticationException exception) {
             throw new CinemaException(ExceptionCode.INVALID_CREDENTIALS);
         }
     }

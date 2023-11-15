@@ -14,6 +14,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     @Query(value = "SELECT * FROM movies WHERE release_date < :currentDate AND end_date > :currentDate", nativeQuery = true)
     Page<Movie> listMovieNowShowing(@Param("currentDate") Date currentDate, Pageable pageable);
     Page<Movie> findByReleaseDateAfter(Date currentDate, Pageable pageable);
-    @Query(value = "SELECT * FROM movies WHERE release_date < :date", nativeQuery = true)
-    Page<Movie> listMovieNewlyRelease(@Param("date") Date date, Pageable pageable);
+    @Query(value = "SELECT * FROM movies WHERE TIMESTAMPDIFF(DAY, :currentDate, release_date) < :days", nativeQuery = true)
+    Page<Movie> listMovieNewlyRelease(@Param("currentDate") Date currentDate,@Param("days") Integer days, Pageable pageable);
 }
+

@@ -4,6 +4,7 @@ import com.example.cinema.exception.CinemaException;
 import com.example.cinema.exception.ExceptionCode;
 import com.example.cinema.pojo.entity.Movie;
 import com.example.cinema.pojo.requests.MovieDto;
+import com.example.cinema.pojo.requests.MovieFilterRequest;
 import com.example.cinema.pojo.responses.BaseResponse;
 import com.example.cinema.repository.MovieRepository;
 import com.example.cinema.service.MovieService;
@@ -16,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -52,13 +52,17 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public ResponseEntity<?> listNewlyReleasedMovies(Integer pageNo, Integer pageSize, Integer months) {
+    public ResponseEntity<?> listNewlyReleasedMovies(Integer pageNo, Integer pageSize, Integer days){
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        LocalDate date = LocalDate.now().plusMonths(months);
-        Page<Movie> movies = movieRepository.listMovieNewlyRelease(DateUtils.asDate(date), pageable);
+        Page<Movie> movies = movieRepository.listMovieNewlyRelease(DateUtils.formatDate(new Date()),days, pageable);
         List<Movie> movieList = movies.getContent();
         List<MovieDto> content = movieList.stream().map(this::mapToDTO).toList();
         return response(content);
+    }
+
+    @Override
+    public ResponseEntity<?> listMoviesFilter(Integer pageNo, Integer pageSize, MovieFilterRequest request) {
+        return null;
     }
 
     private MovieDto mapToDTO(Movie movie) {

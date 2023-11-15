@@ -1,10 +1,12 @@
 package com.example.cinema.controller;
 
+import com.example.cinema.pojo.requests.MovieFilterRequest;
 import com.example.cinema.service.MovieService;
 import com.example.cinema.util.Constants;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/api/movies")
@@ -28,7 +30,13 @@ public class MovieController {
     @GetMapping("/newly-release")
     public ResponseEntity<?> listNewlyReleasedMovies(@RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) Integer pageNo,
                                                      @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) Integer pageSize,
-                                                     @RequestParam(value = "months", defaultValue = Constants.DEFAULT_MONTH, required = false) Integer months){
-        return movieService.listNewlyReleasedMovies(pageNo, pageSize, months);
+                                                     @RequestParam(value = "days", defaultValue = Constants.DEFAULT_DAY, required = false) Integer days) {
+        return movieService.listNewlyReleasedMovies(pageNo, pageSize, days);
+    }
+    @GetMapping("/filter")
+    public ResponseEntity<?> listMoviesFilter(@RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) Integer pageNo,
+                                              @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) Integer pageSize,
+                                              @RequestBody MovieFilterRequest request){
+        return movieService.listMoviesFilter(pageNo, pageSize, request);
     }
 }
