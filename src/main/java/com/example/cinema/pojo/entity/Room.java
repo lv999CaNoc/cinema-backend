@@ -26,4 +26,5 @@ public class Room {
     @JoinColumn(nullable = false, name = "theater_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Theater theater;
+
 }

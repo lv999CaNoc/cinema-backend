@@ -19,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -71,15 +72,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseEntity<?> login(LoginRequest request) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-            AuthenticationResponse authResponse = AuthenticationResponse.builder()
-                    .token(jwtTokenProvider.generateToken(authentication))
-                    .build();
-            return ResponseEntity.ok(BaseResponse.of(authResponse));
-        } catch (AuthenticationException exception) {
-            throw new CinemaException(ExceptionCode.INVALID_CREDENTIALS);
-        }
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        AuthenticationResponse authResponse = AuthenticationResponse.builder()
+                .token(jwtTokenProvider.generateToken(authentication))
+                .build();
+        return ResponseEntity.ok(BaseResponse.of(authResponse));
     }
 
     private ResponseEntity<?> response(Object object) {
