@@ -1,23 +1,20 @@
 package com.example.cinema.pojo.requests;
 
+import com.example.cinema.pojo.entity.Category;
 import com.example.cinema.pojo.entity.Rated;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class MovieDto {
     private Integer id;
     private String title;
-    @NotBlank(message = "Mô tả phim không được để trống.")
     private String description;
     private Integer duration;
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
-    private Date releaseDate;
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
-    private Date endDate;
+    private LocalDateTime releaseDate;
+    private LocalDateTime endDate;
     private String director;
     private String actors;
     private Rated rated;
@@ -26,4 +23,5 @@ public class MovieDto {
     private String trailerURL;
     private String movieImageURl;
     private String bannerImageURl;
+    private List<Category> categories;
 }

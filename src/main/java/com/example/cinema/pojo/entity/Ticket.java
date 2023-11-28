@@ -32,7 +32,7 @@ public class Ticket {
     @JoinColumn(nullable = false,name = "schedule_id")
     private Schedule schedule;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name="bill_id")
     private Bill bill;

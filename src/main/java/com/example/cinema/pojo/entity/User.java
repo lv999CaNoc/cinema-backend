@@ -36,7 +36,7 @@ public class User implements UserDetails {
     @Size(min = 6, message = "Mật khẩu phải dài ít nhất 6 ký tự")
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),

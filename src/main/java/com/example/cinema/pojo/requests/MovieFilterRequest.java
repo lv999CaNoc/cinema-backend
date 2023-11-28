@@ -7,7 +7,4 @@ import java.util.List;
 public class MovieFilterRequest {
     private List<Integer> ratedList;
     private List<Long> categoriesId;
-    private Integer state;
-    private Integer sortBy;
-    private Integer sortDir;
 }

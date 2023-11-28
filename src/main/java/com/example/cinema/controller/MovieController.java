@@ -1,6 +1,7 @@
 package com.example.cinema.controller;
 
 import com.example.cinema.pojo.requests.MovieFilterRequest;
+import com.example.cinema.pojo.requests.ScheduleFilterRequest;
 import com.example.cinema.service.MovieService;
 import com.example.cinema.util.Constants;
 import lombok.AllArgsConstructor;

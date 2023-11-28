@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -35,10 +36,8 @@ public class Movie {
     private String description;
 
     private Integer duration;
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
-    private Date releaseDate;
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
-    private Date endDate;
+    private LocalDateTime releaseDate;
+    private LocalDateTime endDate;
     private String director;
     private String actors;
     private Rated rated;

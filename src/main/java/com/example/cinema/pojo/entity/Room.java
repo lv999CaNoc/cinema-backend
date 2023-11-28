@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.List;
+
 
 @Data
 @Table(name="rooms")
@@ -26,5 +28,6 @@ public class Room {
     @JoinColumn(nullable = false, name = "theater_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Theater theater;
-
+    @OneToMany(mappedBy = "room")
+    private List<Schedule> schedules;
 }

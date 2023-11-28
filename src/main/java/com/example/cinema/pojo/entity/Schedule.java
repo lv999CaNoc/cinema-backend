@@ -25,7 +25,7 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @DateTimeFormat(pattern = "HH:mm dd/MM/yyyy")
-    private Date startDate;
+    private LocalDateTime startDate;
     private double price;
 
     @ManyToOne
@@ -37,5 +37,4 @@ public class Schedule {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
-
 }

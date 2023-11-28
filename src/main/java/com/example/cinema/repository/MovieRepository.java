@@ -7,14 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 
 public interface MovieRepository extends JpaRepository<Movie, Long> {
-    @Query(value = "SELECT * FROM movies WHERE release_date < :currentDate AND end_date > :currentDate", nativeQuery = true)
-    Page<Movie> listMovieNowShowing(@Param("currentDate") Date currentDate, Pageable pageable);
-    Page<Movie> findByReleaseDateAfter(Date currentDate, Pageable pageable);
-    @Query(value = "SELECT * FROM movies WHERE TIMESTAMPDIFF(DAY, :currentDate, release_date) < :days", nativeQuery = true)
-    Page<Movie> listMovieNewlyRelease(@Param("currentDate") Date currentDate,@Param("days") Integer days, Pageable pageable);
+    @Query("SELECT m FROM Movie m WHERE m.releaseDate < :currentDate AND m.endDate > :currentDate")
+    Page<Movie> listMovieNowShowing(@Param("currentDate") LocalDateTime currentDate, Pageable pageable);
+    Page<Movie> findByReleaseDateAfter(LocalDateTime currentDate, Pageable pageable);
+    @Query(value = "SELECT * FROM movies WHERE TIMESTAMPDIFF(DAY, :currentDate, release_date) < :days",nativeQuery = true)
+    Page<Movie> listMovieNewlyRelease(@Param("currentDate") LocalDateTime currentDate,@Param("days") Integer days, Pageable pageable);
 }
 

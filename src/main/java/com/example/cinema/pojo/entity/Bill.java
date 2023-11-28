@@ -29,9 +29,4 @@ public class Bill {
     @JoinColumn(nullable = false, name = "user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
-
-    public String getFormattedCreatedTime() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
-        return createdTime.format(formatter);
-    }
 }
