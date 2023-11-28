@@ -1,5 +1,7 @@
 package com.example.cinema.pojo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,16 +25,19 @@ public class Ticket {
     private String qrImageURL;
 
     @ManyToOne
+    @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false,name = "seat_id")
     private Seat seat;
 
     @ManyToOne
+    @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false,name = "schedule_id")
     private Schedule schedule;
 
     @ManyToOne
+    @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name="bill_id")
     private Bill bill;

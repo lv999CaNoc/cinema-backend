@@ -1,5 +1,6 @@
 package com.example.cinema.pojo.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,14 +38,6 @@ public class User implements UserDetails {
     @Size(min = 6, message = "Mật khẩu phải dài ít nhất 6 ký tự")
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> roles = new HashSet<>();
-
     @Column(nullable = false)
     @NotBlank(message = "Hãy nhập địa chỉ email của bạn")
     @Email(message = "Vui lòng nhập địa chỉ email hợp lệ")
@@ -65,6 +59,18 @@ public class User implements UserDetails {
 
     @Column(name = "locked", nullable = false)
     private boolean isLocked;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    List<Bill> bills;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
