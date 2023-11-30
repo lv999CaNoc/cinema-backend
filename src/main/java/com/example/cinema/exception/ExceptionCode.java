@@ -2,6 +2,8 @@ package com.example.cinema.exception;
 
 import lombok.Getter;
 
+import javax.management.loading.MLetContent;
+
 @Getter
 public enum ExceptionCode {
     REFRESH_TOKEN_NOT_FOUND("400", "Token not found"),
@@ -14,7 +16,9 @@ public enum ExceptionCode {
     EMAIL_ALREADY_EXIST("409", "Email Already Exist"),
     PHONE_ALREADY_EXIST("409", "Phone Already Exist"),
     MOVIE_NOT_FOUND("400", "Movie Not Found"),
-    INVALID_CREDENTIALS("401", "Invalid credentials"),;
+    INVALID_CREDENTIALS("401", "Invalid credentials"),
+    INTERNAL_SERVER_ERROR("500", "Internal server error"),
+    MB_WEB_INVALID_PARAM("400", "Invalid param");
     private final String code;
     private final String message;
 
