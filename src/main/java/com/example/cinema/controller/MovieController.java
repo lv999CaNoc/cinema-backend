@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/movies")
@@ -34,10 +36,17 @@ public class MovieController {
                                                      @RequestParam(value = "days", defaultValue = Constants.DEFAULT_DAY, required = false) Integer days) {
         return movieService.listNewlyReleasedMovies(pageNo, pageSize, days);
     }
-    @GetMapping("/filter")
+    @GetMapping("/search")
     public ResponseEntity<?> listMoviesFilter(@RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) Integer pageNo,
                                               @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) Integer pageSize,
-                                              @RequestBody MovieFilterRequest request){
+                                              @RequestParam(value = "q", required = false) String keyword,
+                                              @RequestParam(value = "rated", required = false) List<Integer> ratedList,
+                                              @RequestParam(value = "categories", required = false) List<Integer> categories){
+        MovieFilterRequest request = MovieFilterRequest.builder()
+                .keyword(keyword)
+                .ratedList(ratedList)
+                .categories(categories)
+                .build();
         return movieService.listMoviesFilter(pageNo, pageSize, request);
     }
 }

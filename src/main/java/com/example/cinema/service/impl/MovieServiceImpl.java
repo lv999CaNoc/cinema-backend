@@ -2,8 +2,8 @@ package com.example.cinema.service.impl;
 
 import com.example.cinema.exception.CinemaException;
 import com.example.cinema.exception.ExceptionCode;
-import com.example.cinema.pojo.entity.Category;
 import com.example.cinema.pojo.entity.Movie;
+import com.example.cinema.pojo.entity.Rated;
 import com.example.cinema.pojo.requests.MovieDto;
 import com.example.cinema.pojo.requests.MovieFilterRequest;
 import com.example.cinema.pojo.responses.BaseResponse;
@@ -52,9 +52,9 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public ResponseEntity<?> listNewlyReleasedMovies(Integer pageNo, Integer pageSize, Integer days){
+    public ResponseEntity<?> listNewlyReleasedMovies(Integer pageNo, Integer pageSize, Integer days) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Movie> movies = movieRepository.listMovieNewlyRelease(LocalDateTime.now(),days, pageable);
+        Page<Movie> movies = movieRepository.listMovieNewlyRelease(LocalDateTime.now(), days, pageable);
         List<Movie> movieList = movies.getContent();
         List<MovieDto> content = movieList.stream().map(this::mapToDTO).toList();
         return response(content);
@@ -62,8 +62,18 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public ResponseEntity<?> listMoviesFilter(Integer pageNo, Integer pageSize, MovieFilterRequest request) {
-        //TODO
-        return null;
+        String keyword = request.getKeyword();
+        List<Integer> ratedList = request.getRatedList();
+        List<Integer> categories = request.getCategories();
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        List<Rated> enumRated = null;
+        if(ratedList != null){
+            enumRated = ratedList.stream().map(value -> Rated.values()[value]).toList();
+        }
+        Page<Movie> movies = movieRepository.searchMovies(keyword, enumRated, categories, pageable);
+        List<Movie> movieList = movies.getContent();
+        List<MovieDto> content = movieList.stream().map(this::mapToDTO).toList();
+        return response(content);
     }
 
     private MovieDto mapToDTO(Movie movie) {

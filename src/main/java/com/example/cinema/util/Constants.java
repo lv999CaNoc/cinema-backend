@@ -3,13 +3,11 @@ package com.example.cinema.util;
 public class Constants {
     public static final String DEFAULT_PAGE_NUMBER = "0";
     public static final String DEFAULT_PAGE_SIZE = "10";
-    public static final String DEFAULT_SORT_BY = "id";
-    public static final String DEFAULT_SORT_DIRECTION = "asc";
-    public static final String DEFAULT_DAY = "30";
-    public static final int SORT_DIRECTION_ASC = 0;
-    public static final int SORT_DIRECTION_DESC = 1;
-    public static final int SORT_BY_TIME = 0;
-    public static final int SORT_BY_PRICE = 1;
+    public static final String DEFAULT_DAY = "60";
+    public static final String SORT_DIRECTION_ASC = "asc";
+    public static final String SORT_DIRECTION_DESC = "desc";
+    public static final String SORT_BY_TIME = "startDate";
+    public static final String SORT_BY_PRICE = "price";
     //rated
     public static final int ALL_AUDIENCES = 0;
     public static final int UNDER_13 = 1;
