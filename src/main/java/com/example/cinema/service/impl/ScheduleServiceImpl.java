@@ -50,7 +50,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private ScheduleDto mapToDTO(Schedule schedule) {
        ScheduleDto scheduleDto = modelMapper.map(schedule, ScheduleDto.class);
-       scheduleDto.setTheater(schedule.getRoom().getTheater().getName());
+       scheduleDto.setTheater(schedule.getRoom().getTheater());
+       scheduleDto.setRoom(schedule.getRoom());
        return scheduleDto;
     }
 

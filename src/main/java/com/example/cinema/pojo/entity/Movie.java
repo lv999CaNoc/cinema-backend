@@ -51,12 +51,7 @@ public class Movie {
     @Column(length = 1000, name = "banner_image_url")
     private String bannerImageURl;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(name = "movie_categories", joinColumns = @JoinColumn(name = "movie_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category> categories;
-
-    @OneToMany(mappedBy = "movie")
-    @JsonManagedReference
-    private List<Schedule> schedules;
-
 }

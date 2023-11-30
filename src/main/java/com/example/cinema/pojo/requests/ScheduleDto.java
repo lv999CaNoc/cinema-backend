@@ -1,5 +1,6 @@
 package com.example.cinema.pojo.requests;
 
+import com.example.cinema.pojo.entity.Room;
 import com.example.cinema.pojo.entity.Theater;
 import lombok.Data;
 
@@ -10,5 +11,6 @@ public class ScheduleDto {
     private Integer id;
     private LocalDateTime startDate;
     private Double price;
-    private String theater;
+    private Theater theater;
+    private Room room;
 }

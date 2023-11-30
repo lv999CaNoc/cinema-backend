@@ -31,12 +31,8 @@ public class Bill {
     private String status;
 
     @ManyToOne
-    @JsonBackReference
     @JoinColumn(nullable = false, name = "user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @OneToMany(mappedBy = "bill")
-    @JsonManagedReference
-    private List<Ticket> tickets;
 }

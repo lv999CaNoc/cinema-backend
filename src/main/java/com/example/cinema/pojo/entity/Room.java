@@ -1,5 +1,6 @@
 package com.example.cinema.pojo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,13 +29,6 @@ public class Room {
     @ManyToOne
     @JoinColumn(nullable = false, name = "theater_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
     private Theater theater;
-
-    @OneToMany(mappedBy = "room")
-    @JsonManagedReference
-    private List<Schedule> schedules;
-
-    @OneToMany(mappedBy = "room")
-    @JsonManagedReference
-    List<Seat> seats;
 }

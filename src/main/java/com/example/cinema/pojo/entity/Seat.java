@@ -25,6 +25,5 @@ public class Seat {
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "room_id",nullable = false)
-    @JsonBackReference
     private Room room;
 }
