@@ -16,9 +16,12 @@ public enum ExceptionCode {
     EMAIL_ALREADY_EXIST("409", "Email Already Exist"),
     PHONE_ALREADY_EXIST("409", "Phone Already Exist"),
     MOVIE_NOT_FOUND("400", "Movie Not Found"),
+    BILL_NOT_FOUND("400", "Bill Not Found"),
+    SEAT_NOT_FOUND("400", "Seat Not Found"),
+    SEAT_NOT_AVAIlABLE("400", "Seat Not Available, Someone Else Booked"),
     INVALID_CREDENTIALS("401", "Invalid credentials"),
     INTERNAL_SERVER_ERROR("500", "Internal server error"),
-    MB_WEB_INVALID_PARAM("400", "Invalid param");
+    MB_WEB_INVALID_PARAM("400", "Invalid param"),;
     private final String code;
     private final String message;
 

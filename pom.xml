@@ -86,6 +86,25 @@
             <artifactId>modelmapper</artifactId>
             <version>2.3.5</version>
         </dependency>
+
+        <!--        Paypal dependency-->
+        <dependency>
+            <groupId>com.paypal.sdk</groupId>
+            <artifactId>rest-api-sdk</artifactId>
+            <version>1.14.0</version>
+        </dependency>
+
+        <!--        Generate qr code dependency-->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.4.0</version>
+        </dependency>
     </dependencies>
 
     <build>

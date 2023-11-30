@@ -22,12 +22,12 @@ public class Ticket {
     @Column(length = 2000)
     private String qrImageURL;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false,name = "seat_id")
     private Seat seat;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name="bill_id")
     private Bill bill;

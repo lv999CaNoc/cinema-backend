@@ -24,14 +24,14 @@ public class Bill {
 
     @CreatedDate
     private LocalDateTime createdTime;
-    private String status;
+    private BillStatus status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = false,name = "schedule_id")
     private Schedule schedule;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
