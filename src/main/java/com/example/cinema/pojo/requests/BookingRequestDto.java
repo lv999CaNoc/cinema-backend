@@ -7,6 +7,6 @@ import java.util.List;
 @Data
 public class BookingRequestDto {
     private Long userId;
-    private Integer scheduleId;
+    private Long scheduleId;
     private List<Long> listSeatIds;
 }

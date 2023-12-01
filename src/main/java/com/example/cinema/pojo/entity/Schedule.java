@@ -25,7 +25,7 @@ import java.util.Date;
 public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     private LocalDateTime startDate;
     private double price;
 
