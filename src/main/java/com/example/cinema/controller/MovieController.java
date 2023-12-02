@@ -1,11 +1,11 @@
 package com.example.cinema.controller;
 
 import com.example.cinema.pojo.requests.MovieFilterRequest;
-import com.example.cinema.pojo.requests.ScheduleFilterRequest;
+import com.example.cinema.pojo.responses.BaseResponse;
 import com.example.cinema.service.MovieService;
 import com.example.cinema.util.Constants;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,28 +16,34 @@ import java.util.List;
 @AllArgsConstructor
 public class MovieController {
     private MovieService movieService;
+
     @GetMapping("/{id}")
-    public ResponseEntity<?> getMovieById(@PathVariable Long id){
-        return movieService.getMovieById(id);
+    @ResponseStatus(HttpStatus.OK)
+    public BaseResponse getMovieById(@PathVariable Long id){
+        return BaseResponse.of(movieService.getMovieById(id));
     }
     @GetMapping("/now-showing")
-    public ResponseEntity<?> listNowShowingMovies(@RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) Integer pageNo,
-                                                  @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) Integer pageSize){
-        return movieService.listNowShowingMovies(pageNo, pageSize);
+    @ResponseStatus(HttpStatus.OK)
+    public BaseResponse getAllNowShowingMovies(@RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) Integer pageNo,
+                                               @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) Integer pageSize){
+        return BaseResponse.of(movieService.getAllNowShowingMovies(pageNo, pageSize));
     }
     @GetMapping("/coming-soon")
-    public ResponseEntity<?> listComingSoonMovies(@RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) Integer pageNo,
-                                                  @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) Integer pageSize){
-        return movieService.listComingSoonMovies(pageNo, pageSize);
+    @ResponseStatus(HttpStatus.OK)
+    public BaseResponse getAllComingSoonMovies(@RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) Integer pageNo,
+                                               @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) Integer pageSize){
+        return BaseResponse.of(movieService.getAllComingSoonMovies(pageNo, pageSize));
     }
     @GetMapping("/newly-release")
-    public ResponseEntity<?> listNewlyReleasedMovies(@RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) Integer pageNo,
-                                                     @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) Integer pageSize,
-                                                     @RequestParam(value = "days", defaultValue = Constants.DEFAULT_DAY, required = false) Integer days) {
-        return movieService.listNewlyReleasedMovies(pageNo, pageSize, days);
+    @ResponseStatus(HttpStatus.OK)
+    public BaseResponse getAllNewlyReleasedMovies(@RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) Integer pageNo,
+                                                  @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) Integer pageSize,
+                                                  @RequestParam(value = "days", defaultValue = Constants.DEFAULT_DAY, required = false) Integer days) {
+        return BaseResponse.of(movieService.getAllNewlyReleasedMovies(pageNo, pageSize, days));
     }
     @GetMapping("/search")
-    public ResponseEntity<?> listMoviesFilter(@RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) Integer pageNo,
+    @ResponseStatus(HttpStatus.OK)
+    public BaseResponse getAllMovieWithFilter(@RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) Integer pageNo,
                                               @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) Integer pageSize,
                                               @RequestParam(value = "q", required = false) String keyword,
                                               @RequestParam(value = "rated", required = false) List<Integer> ratedList,
@@ -47,6 +53,6 @@ public class MovieController {
                 .ratedList(ratedList)
                 .categories(categories)
                 .build();
-        return movieService.listMoviesFilter(pageNo, pageSize, request);
+        return BaseResponse.of(movieService.getAllMovieWithFilter(pageNo, pageSize, request));
     }
 }

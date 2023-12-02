@@ -27,41 +27,38 @@ public class MovieServiceImpl implements MovieService {
     private ModelMapper modelMapper;
 
     @Override
-    public ResponseEntity<?> getMovieById(Long id) {
+    public MovieDto getMovieById(Long id) {
         Movie movie = movieRepository.findById(id)
                 .orElseThrow(() -> new CinemaException(ExceptionCode.MOVIE_NOT_FOUND));
-        return response(mapToDTO(movie));
+        return mapToDTO(movie);
     }
 
     @Override
-    public ResponseEntity<?> listNowShowingMovies(Integer pageNo, Integer pageSize) {
+    public List<MovieDto> getAllNowShowingMovies(Integer pageNo, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Movie> movies = movieRepository.listMovieNowShowing(LocalDateTime.now(), pageable);
         List<Movie> movieList = movies.getContent();
-        List<MovieDto> content = movieList.stream().map(this::mapToDTO).toList();
-        return response(content);
+        return movieList.stream().map(this::mapToDTO).toList();
     }
 
     @Override
-    public ResponseEntity<?> listComingSoonMovies(Integer pageNo, Integer pageSize) {
+    public List<MovieDto> getAllComingSoonMovies(Integer pageNo, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Movie> movies = movieRepository.findByReleaseDateAfter(LocalDateTime.now(), pageable);
         List<Movie> movieList = movies.getContent();
-        List<MovieDto> content = movieList.stream().map(this::mapToDTO).toList();
-        return response(content);
+        return movieList.stream().map(this::mapToDTO).toList();
     }
 
     @Override
-    public ResponseEntity<?> listNewlyReleasedMovies(Integer pageNo, Integer pageSize, Integer days) {
+    public List<MovieDto> getAllNewlyReleasedMovies(Integer pageNo, Integer pageSize, Integer days) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Movie> movies = movieRepository.listMovieNewlyRelease(LocalDateTime.now(), days, pageable);
         List<Movie> movieList = movies.getContent();
-        List<MovieDto> content = movieList.stream().map(this::mapToDTO).toList();
-        return response(content);
+        return movieList.stream().map(this::mapToDTO).toList();
     }
 
     @Override
-    public ResponseEntity<?> listMoviesFilter(Integer pageNo, Integer pageSize, MovieFilterRequest request) {
+    public List<MovieDto> getAllMovieWithFilter(Integer pageNo, Integer pageSize, MovieFilterRequest request) {
         String keyword = request.getKeyword();
         List<Integer> ratedList = request.getRatedList();
         List<Integer> categories = request.getCategories();
@@ -72,8 +69,7 @@ public class MovieServiceImpl implements MovieService {
         }
         Page<Movie> movies = movieRepository.searchMovies(keyword, enumRated, categories, pageable);
         List<Movie> movieList = movies.getContent();
-        List<MovieDto> content = movieList.stream().map(this::mapToDTO).toList();
-        return response(content);
+        return movieList.stream().map(this::mapToDTO).toList();
     }
 
     private MovieDto mapToDTO(Movie movie) {

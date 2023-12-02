@@ -19,4 +19,5 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
     List<Integer> findTickets_IdByBill_StatusAndSchedule_IdAndSeat_Id(@Param("status") List<BillStatus> status,
                                                                       @Param("scheduleId") Long scheduleId,
                                                                       @Param("seatId") Long seatId);
+    List<Ticket> findTicketsByBill_Id(Long billId);
 }

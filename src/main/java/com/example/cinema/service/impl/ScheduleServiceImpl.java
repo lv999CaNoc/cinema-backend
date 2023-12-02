@@ -29,7 +29,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private MovieRepository movieRepository;
 
     @Override
-    public ResponseEntity<?> listSchedule(Long movieId, Integer pageNo, Integer pageSize, ScheduleFilterRequest request) {
+    public List<ScheduleDto> getAllScheduleByMovie(Long movieId, Integer pageNo, Integer pageSize, ScheduleFilterRequest request) {
         movieRepository.findById(movieId)
                 .orElseThrow(()-> new CinemaException(ExceptionCode.MOVIE_NOT_FOUND));
         String sortBy = request.getSortBy();
@@ -40,13 +40,11 @@ public class ScheduleServiceImpl implements ScheduleService {
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         Page<Schedule> schedules = scheduleRepository.listScheduleFilterByMovieId(movieId, date.atStartOfDay(), date.plusDays(1).atStartOfDay(), pageable);
         List<Schedule> scheduleList = schedules.getContent();
-        List<ScheduleDto> contents = scheduleList.stream().map(this::mapToDTO).toList();
-        return response(contents);
+        return scheduleList.stream().map(this::mapToDTO).toList();
     }
 
     private ScheduleDto mapToDTO(Schedule schedule) {
-        ScheduleDto scheduleDto = modelMapper.map(schedule, ScheduleDto.class);
-        return scheduleDto;
+        return modelMapper.map(schedule, ScheduleDto.class);
     }
 
     private Schedule mapToEntity(ScheduleDto scheduleDto) {

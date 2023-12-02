@@ -25,14 +25,13 @@ public class SeatServiceImpl implements SeatService {
     private RoomRepository roomRepository;
 
     @Override
-    public ResponseEntity<?> listSeat(Long scheduleId, Long roomId) {
+    public List<SeatDto> getAllSeat(Long scheduleId, Long roomId) {
         roomRepository.findById(roomId)
                 .orElseThrow(() -> new CinemaException(ExceptionCode.ROOM_NOT_FOUND));
         scheduleRepository.findById(scheduleId)
                 .orElseThrow(()-> new CinemaException(ExceptionCode.SCHEDULE_NOT_FOUND));
         List<Seat> seats = seatRepository.findAllByScheduleAndRoom(scheduleId, roomId);
-        List<SeatDto> seatDtos = seats.stream().map(this::mapToDTO).toList();
-        return response(seatDtos);
+        return seats.stream().map(this::mapToDTO).toList();
     }
 
     private SeatDto mapToDTO(Seat seat) {

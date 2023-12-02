@@ -1,7 +1,9 @@
 package com.example.cinema.service;
 
-import org.springframework.http.ResponseEntity;
+import com.example.cinema.pojo.dto.SeatDto;
+
+import java.util.List;
 
 public interface SeatService {
-    ResponseEntity<?> listSeat(Long scheduleId, Long roomId);
+    List<SeatDto> getAllSeat(Long scheduleId, Long roomId);
 }

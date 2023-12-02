@@ -10,4 +10,6 @@ public interface TicketService {
     boolean isSeatAvailable(Long scheduleId, Long seatId);
 
     List<TicketDto> create(BookingRequest bookingRequest, Bill bill) throws RuntimeException;
+
+    List<TicketDto> getAllTicketByBill(Long id);
 }

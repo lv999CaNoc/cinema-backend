@@ -2,11 +2,9 @@ package com.example.cinema.service.impl;
 
 import com.example.cinema.exception.CinemaException;
 import com.example.cinema.exception.ExceptionCode;
+import com.example.cinema.pojo.dto.MovieDto;
 import com.example.cinema.pojo.dto.TicketDto;
-import com.example.cinema.pojo.entity.Bill;
-import com.example.cinema.pojo.entity.BillStatus;
-import com.example.cinema.pojo.entity.Seat;
-import com.example.cinema.pojo.entity.Ticket;
+import com.example.cinema.pojo.entity.*;
 import com.example.cinema.pojo.requests.BookingRequest;
 import com.example.cinema.repository.BillRepository;
 import com.example.cinema.repository.SeatRepository;
@@ -17,6 +15,7 @@ import com.example.cinema.service.TicketService;
 import com.google.zxing.WriterException;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -42,6 +41,14 @@ public class TicketServiceImpl implements TicketService {
         return ticketRepository.findTickets_IdByBill_StatusAndSchedule_IdAndSeat_Id(
                 Arrays.asList(BillStatus.PENDING, BillStatus.COMPLETE),
                 scheduleId, seatId).isEmpty();
+    }
+
+    @Override
+    public List<TicketDto> getAllTicketByBill(Long id) {
+        billRepository.findById(id)
+                .orElseThrow(() -> new CinemaException(ExceptionCode.BILL_NOT_FOUND));
+        return ticketRepository.findTicketsByBill_Id(id).stream()
+                .map(this::mapToDTO).toList();
     }
 
     @Override
@@ -80,5 +87,8 @@ public class TicketServiceImpl implements TicketService {
             }
         });
         return tickets;
+    }
+    private TicketDto mapToDTO(Ticket ticket) {
+        return modelMapper.map(ticket, TicketDto.class);
     }
 }
