@@ -1,4 +1,4 @@
-package com.example.cinema.pojo.requests;
+package com.example.cinema.pojo.dto;
 
 import com.example.cinema.pojo.entity.Category;
 import com.example.cinema.pojo.entity.Rated;
