@@ -2,10 +2,10 @@ package com.example.cinema.service.impl;
 
 import com.example.cinema.exception.CinemaException;
 import com.example.cinema.exception.ExceptionCode;
-import com.example.cinema.pojo.requests.LoginRequest;
-import com.example.cinema.pojo.requests.RegisterRequest;
 import com.example.cinema.pojo.entity.Role;
 import com.example.cinema.pojo.entity.User;
+import com.example.cinema.pojo.requests.LoginRequest;
+import com.example.cinema.pojo.requests.RegisterRequest;
 import com.example.cinema.pojo.responses.AuthenticationResponse;
 import com.example.cinema.pojo.responses.BaseResponse;
 import com.example.cinema.repository.RoleRepository;
@@ -17,9 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -79,7 +77,12 @@ public class AuthServiceImpl implements AuthService {
         return ResponseEntity.ok(BaseResponse.of(authResponse));
     }
 
-    private ResponseEntity<?> response(Object object) {
-        return ResponseEntity.ok(BaseResponse.of(object));
+    @Override
+    public User getUser() throws RuntimeException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof User) {
+            return (User) authentication.getPrincipal();
+        }
+        throw new CinemaException(ExceptionCode.UNAUTHORIZED);
     }
 }

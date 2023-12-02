@@ -8,7 +8,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class BookingRequest {
-    private Long userId;
     private Long scheduleId;
     private List<Long> listSeatIds;
 }

@@ -2,12 +2,11 @@ package com.example.cinema.exception;
 
 import lombok.Getter;
 
-import javax.management.loading.MLetContent;
-
 @Getter
 public enum ExceptionCode {
     //4xx
     REFRESH_TOKEN_NOT_FOUND("400", "Token not found"),
+    UNAUTHORIZED("401", "Unauthorized"),
     INVALID_JWT_TOKEN("403", "Invalid JWT token"),
     EXPIRED_JWT_TOKEN("403", "Expired JWT token"),
     UNSUPPORTED_JWT_TOKEN("403", "Unsupported JWT token"),

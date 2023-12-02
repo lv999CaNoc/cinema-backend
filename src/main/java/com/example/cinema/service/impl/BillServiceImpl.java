@@ -10,7 +10,7 @@ import com.example.cinema.pojo.entity.User;
 import com.example.cinema.pojo.requests.BookingRequest;
 import com.example.cinema.repository.BillRepository;
 import com.example.cinema.repository.ScheduleRepository;
-import com.example.cinema.repository.UserRepository;
+import com.example.cinema.service.AuthService;
 import com.example.cinema.service.BillService;
 import com.example.cinema.service.TicketService;
 import lombok.AllArgsConstructor;
@@ -19,15 +19,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class BillServiceImpl implements BillService {
     private BillRepository billRepository;
-    private UserRepository userRepository;
     private ScheduleRepository scheduleRepository;
 
     private TicketService ticketService;
+    private AuthService authService;
 
     private ModelMapper modelMapper;
 
@@ -42,7 +44,7 @@ public class BillServiceImpl implements BillService {
             }
         });
 
-        User user = userRepository.getById(bookingRequest.getUserId());
+        User user = authService.getUser();
         Schedule schedule = scheduleRepository.getById(bookingRequest.getScheduleId());
 
         // create bill
@@ -54,7 +56,18 @@ public class BillServiceImpl implements BillService {
                 .build();
         billRepository.save(billToCreate);
 
+        // create ticket for each seat
+        ticketService.create(bookingRequest, billToCreate);
+
         return modelMapper.map(billToCreate, BillDto.class);
     }
 
+    @Override
+    public List<BillDto> getAll() {
+        Long userId = authService.getUser().getId();
+        return billRepository.getAllByUserId(userId)
+                .stream()
+                .map(bill -> modelMapper.map(bill, BillDto.class))
+                .collect(Collectors.toList());
+    }
 }

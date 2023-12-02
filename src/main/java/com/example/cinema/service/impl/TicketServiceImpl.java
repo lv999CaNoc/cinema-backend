@@ -44,19 +44,17 @@ public class TicketServiceImpl implements TicketService {
                 scheduleId, seatId).isEmpty();
     }
 
-    public List<TicketDto> create(BookingRequest bookingRequest, Long billId) throws RuntimeException {
+    @Override
+    public List<TicketDto> create(BookingRequest bookingRequest, Bill bill) throws RuntimeException {
         List<TicketDto> tickets = new ArrayList<>();
-
-        Bill bill = billRepository.findById(billId)
-                .orElseThrow(() -> new CinemaException(ExceptionCode.BILL_NOT_FOUND));
 
         bookingRequest.getListSeatIds().stream().forEach(seatId -> {
             Seat seat = seatRepository.findById(seatId)
                     .orElseThrow(() -> new CinemaException(ExceptionCode.SEAT_NOT_FOUND));
 
             // generate and upload QR code
-            String qrContext = "UserID_" + bookingRequest.getUserId() +
-                    ".BillID_" + billId +
+            String qrContext = "UserID_" + bill.getUser().getId() +
+                    ".BillID_" + bill.getId() +
                     ".SeatID_" + seatId;
             try {
                 byte[] imageBytes = qrCodeService.generateQRCodeImage(qrContext, 240, 240);

@@ -6,10 +6,9 @@ import com.example.cinema.pojo.responses.BaseResponse;
 import com.example.cinema.service.BillService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/bill")
@@ -21,5 +20,11 @@ public class BillController {
     public ResponseEntity<?> createBill(@RequestBody BookingRequest booking) {
         BillDto bill = billService.create(booking);
         return ResponseEntity.ok(BaseResponse.of(bill));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<?> getAllBillByUser() {
+        List<BillDto> bills = billService.getAll();
+        return ResponseEntity.ok(BaseResponse.of(bills));
     }
 }
