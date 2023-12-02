@@ -2,8 +2,8 @@ package com.example.cinema.service.impl;
 
 import com.example.cinema.exception.CinemaException;
 import com.example.cinema.exception.ExceptionCode;
+import com.example.cinema.pojo.dto.ScheduleDto;
 import com.example.cinema.pojo.entity.Schedule;
-import com.example.cinema.pojo.requests.ScheduleDto;
 import com.example.cinema.pojo.requests.ScheduleFilterRequest;
 import com.example.cinema.pojo.responses.BaseResponse;
 import com.example.cinema.repository.MovieRepository;
@@ -45,10 +45,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     private ScheduleDto mapToDTO(Schedule schedule) {
-       ScheduleDto scheduleDto = modelMapper.map(schedule, ScheduleDto.class);
-       scheduleDto.setTheater(schedule.getRoom().getTheater());
-       scheduleDto.setRoom(schedule.getRoom());
-       return scheduleDto;
+        ScheduleDto scheduleDto = modelMapper.map(schedule, ScheduleDto.class);
+        return scheduleDto;
     }
 
     private Schedule mapToEntity(ScheduleDto scheduleDto) {

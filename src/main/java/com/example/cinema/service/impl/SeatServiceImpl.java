@@ -2,8 +2,8 @@ package com.example.cinema.service.impl;
 
 import com.example.cinema.exception.CinemaException;
 import com.example.cinema.exception.ExceptionCode;
+import com.example.cinema.pojo.dto.SeatDto;
 import com.example.cinema.pojo.entity.Seat;
-import com.example.cinema.pojo.requests.SeatDto;
 import com.example.cinema.pojo.responses.BaseResponse;
 import com.example.cinema.repository.RoomRepository;
 import com.example.cinema.repository.ScheduleRepository;
