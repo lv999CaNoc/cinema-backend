@@ -28,7 +28,7 @@ public class Bill {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(nullable = false,name = "schedule_id")
+    @JoinColumn(nullable = false, name = "schedule_id")
     private Schedule schedule;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -36,4 +36,8 @@ public class Bill {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
+    @CreatedDate
+    private LocalDateTime paymentTime;
+    private String paymentId;
+    private String payerID;
 }

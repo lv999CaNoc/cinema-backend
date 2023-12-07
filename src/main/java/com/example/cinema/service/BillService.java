@@ -11,4 +11,5 @@ public interface BillService {
     BillDto create(BookingRequest bookingRequest) throws RuntimeException;
 
     List<BillDto> getAll();
+
 }
