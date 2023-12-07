@@ -3,7 +3,6 @@ package com.example.cinema.pojo.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,17 +39,6 @@ public class User implements UserDetails {
     @NotBlank(message = "Hãy nhập địa chỉ email của bạn")
     @Email(message = "Vui lòng nhập địa chỉ email hợp lệ")
     private String email;
-
-    @Pattern(regexp = "\\d{10}", message = "Vui lòng nhập 10 chữ số.")
-    private String phoneNumber;
-
-    @Size(max = 10, message = "Nhập tối đa 10 ký tự")
-    @NotBlank(message = "Hãy nhập tên của bạn")
-    private String firstName;
-
-    @Size(max = 10, message = "Nhập tối đa 10 ký tự")
-    @NotBlank(message = "Hãy nhập họ của bạn")
-    private String lastName;
 
     @Column(name = "enabled", nullable = false)
     private boolean isEnabled;

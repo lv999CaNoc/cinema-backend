@@ -46,9 +46,6 @@ public class AuthServiceImpl implements AuthService {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new CinemaException(ExceptionCode.EMAIL_ALREADY_EXIST);
         }
-        if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
-            throw new CinemaException(ExceptionCode.PHONE_ALREADY_EXIST);
-        }
         Role role = roleRepository.findByName("ROLE_USER");
         Set<Role> roles = new HashSet<>();
         roles.add(role);
@@ -57,9 +54,7 @@ public class AuthServiceImpl implements AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(roles)
                 .email(request.getEmail())
-                .phoneNumber(request.getPhoneNumber())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
+                .isEnabled(true)
                 .build();
         userRepository.save(newUser);
         AuthenticationResponse response = AuthenticationResponse.builder()

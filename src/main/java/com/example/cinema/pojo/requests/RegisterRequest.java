@@ -20,8 +20,4 @@ public class RegisterRequest {
     private String password;
     @Email
     private String email;
-    @NotBlank
-    private String phoneNumber;
-    private String firstName;
-    private String lastName;
 }
