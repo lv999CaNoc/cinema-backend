@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -31,7 +32,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public List<ScheduleDto> getAllScheduleByMovie(Long movieId, Integer pageNo, Integer pageSize, ScheduleFilterRequest request) {
         movieRepository.findById(movieId)
-                .orElseThrow(()-> new CinemaException(ExceptionCode.MOVIE_NOT_FOUND));
+                .orElseThrow(() -> new CinemaException(ExceptionCode.MOVIE_NOT_FOUND));
         String sortBy = request.getSortBy();
         String sortDir = request.getSortDir();
         LocalDate date = (request.getDate() == null ? LocalDate.now() : request.getDate());
@@ -41,6 +42,14 @@ public class ScheduleServiceImpl implements ScheduleService {
         Page<Schedule> schedules = scheduleRepository.listScheduleFilterByMovieId(movieId, date.atStartOfDay(), date.plusDays(1).atStartOfDay(), pageable);
         List<Schedule> scheduleList = schedules.getContent();
         return scheduleList.stream().map(this::mapToDTO).toList();
+    }
+
+    @Override
+    public List<ScheduleDto> getAllScheduleByMovieAndDate(Long movieId, LocalDate date) {
+        LocalDateTime startOfDay, endOfDay;
+        startOfDay = (date.isEqual(LocalDate.now())) ? LocalDateTime.now() : date.atStartOfDay();
+        endOfDay = date.plusDays(1).atStartOfDay();
+        return scheduleRepository.findByMovieIdAndDate(movieId, startOfDay, endOfDay).stream().map(this::mapToDTO).toList();
     }
 
     private ScheduleDto mapToDTO(Schedule schedule) {
