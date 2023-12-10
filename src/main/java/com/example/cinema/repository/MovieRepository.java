@@ -15,9 +15,11 @@ import java.util.List;
 public interface MovieRepository extends JpaRepository<Movie, Long> {
     @Query("SELECT m FROM Movie m WHERE m.releaseDate < :currentDate AND m.endDate > :currentDate")
     Page<Movie> listMovieNowShowing(@Param("currentDate") LocalDateTime currentDate, Pageable pageable);
+
     Page<Movie> findByReleaseDateAfter(LocalDateTime currentDate, Pageable pageable);
+
     @Query(value = "SELECT * FROM movies WHERE TIMESTAMPDIFF(DAY, release_date, :currentDate)> 0 AND TIMESTAMPDIFF(DAY, release_date, :currentDate) < :days", nativeQuery = true)
-    Page<Movie> listMovieNewlyRelease(@Param("currentDate") LocalDateTime currentDate,@Param("days") Integer days, Pageable pageable);
+    Page<Movie> listMovieNewlyRelease(@Param("currentDate") LocalDateTime currentDate, @Param("days") Integer days, Pageable pageable);
 
     @Query("SELECT DISTINCT m FROM Movie m LEFT JOIN FETCH m.categories c" +
             " WHERE (:rated IS NULL OR m.rated IN (:rated)) " +
@@ -28,5 +30,8 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
             "OR UPPER(m.title) LIKE UPPER(CONCAT('%', :keyword, '%'))" +
             "OR UPPER(c.name) LIKE UPPER(CONCAT('%', :keyword, '%')))")
     Page<Movie> searchMovies(@Param("keyword") String keyword, @Param("rated") List<Rated> rated, @Param("categories") List<Integer> categories, Pageable pageable);
+
+    @Query(value = "SELECT m.title FROM movies m WHERE UPPER(m.title) LIKE UPPER(CONCAT('%', :keyword, '%'))", nativeQuery = true)
+    List<String> searchMoviesByTitle(@Param("keyword") String keyword);
 }
 

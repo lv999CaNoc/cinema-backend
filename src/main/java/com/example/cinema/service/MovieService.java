@@ -15,4 +15,6 @@ public interface MovieService {
     List<MovieDto> getAllNewlyReleasedMovies(Integer pageNo, Integer pageSize, Integer days);
 
     List<MovieDto> getAllMovieWithFilter(Integer pageNo, Integer pageSize, MovieFilterRequest request);
+
+    List<String> searchTitle(String keyword);
 }

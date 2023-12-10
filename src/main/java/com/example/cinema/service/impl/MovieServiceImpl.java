@@ -64,12 +64,17 @@ public class MovieServiceImpl implements MovieService {
         List<Integer> categories = request.getCategories();
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         List<Rated> enumRated = null;
-        if(ratedList != null){
+        if (ratedList != null) {
             enumRated = ratedList.stream().map(value -> Rated.values()[value]).toList();
         }
         Page<Movie> movies = movieRepository.searchMovies(keyword, enumRated, categories, pageable);
         List<Movie> movieList = movies.getContent();
         return movieList.stream().map(this::mapToDTO).toList();
+    }
+
+    @Override
+    public List<String> searchTitle(String keyword) {
+        return movieRepository.searchMoviesByTitle(keyword);
     }
 
     private MovieDto mapToDTO(Movie movie) {

@@ -19,21 +19,24 @@ public class MovieController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse getMovieById(@PathVariable Long id){
+    public BaseResponse getMovieById(@PathVariable Long id) {
         return BaseResponse.of(movieService.getMovieById(id));
     }
+
     @GetMapping("/now-showing")
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse getAllNowShowingMovies(@RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) Integer pageNo,
-                                               @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) Integer pageSize){
+                                               @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) Integer pageSize) {
         return BaseResponse.of(movieService.getAllNowShowingMovies(pageNo, pageSize));
     }
+
     @GetMapping("/coming-soon")
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse getAllComingSoonMovies(@RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) Integer pageNo,
-                                               @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) Integer pageSize){
+                                               @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) Integer pageSize) {
         return BaseResponse.of(movieService.getAllComingSoonMovies(pageNo, pageSize));
     }
+
     @GetMapping("/newly-release")
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse getAllNewlyReleasedMovies(@RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) Integer pageNo,
@@ -41,18 +44,25 @@ public class MovieController {
                                                   @RequestParam(value = "days", defaultValue = Constants.DEFAULT_DAY, required = false) Integer days) {
         return BaseResponse.of(movieService.getAllNewlyReleasedMovies(pageNo, pageSize, days));
     }
+
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse getAllMovieWithFilter(@RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) Integer pageNo,
                                               @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) Integer pageSize,
                                               @RequestParam(value = "q", required = false) String keyword,
                                               @RequestParam(value = "rated", required = false) List<Integer> ratedList,
-                                              @RequestParam(value = "categories", required = false) List<Integer> categories){
+                                              @RequestParam(value = "categories", required = false) List<Integer> categories) {
         MovieFilterRequest request = MovieFilterRequest.builder()
                 .keyword(keyword)
                 .ratedList(ratedList)
                 .categories(categories)
                 .build();
         return BaseResponse.of(movieService.getAllMovieWithFilter(pageNo, pageSize, request));
+    }
+
+    @GetMapping("/suggest")
+    @ResponseStatus(HttpStatus.OK)
+    public BaseResponse getMovieByTitle(@RequestParam String keyword) {
+        return BaseResponse.of(movieService.searchTitle(keyword));
     }
 }
