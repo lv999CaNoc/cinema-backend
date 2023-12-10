@@ -7,14 +7,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/seats")
 @AllArgsConstructor
 public class SeatController {
     private SeatService seatService;
 
-    @GetMapping("/seats")
+    @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse getAllSeat(@RequestParam Long scheduleId, @RequestParam Long roomId) {
-        return BaseResponse.of(seatService.getAllSeat(scheduleId, roomId));
+    public BaseResponse getAllSeat(@RequestParam Long scheduleId) {
+        return BaseResponse.of(seatService.getSeatByScheduleId(scheduleId));
     }
 }

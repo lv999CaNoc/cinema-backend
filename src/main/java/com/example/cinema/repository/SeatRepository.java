@@ -13,4 +13,6 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
             "LEFT JOIN Schedule sc ON s.room.id = sc.room.id " +
             "WHERE s.room.id = :roomId AND sc.id = :scheduleId")
     List<Seat> findAllByScheduleAndRoom(@Param("scheduleId") Long scheduleId, @Param("roomId") Long roomId);
+
+    List<Seat> getSeatByRoom_Id(Integer roomId);
 }

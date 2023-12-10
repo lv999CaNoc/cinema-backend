@@ -1,9 +1,9 @@
 package com.example.cinema.service;
 
-import com.example.cinema.pojo.dto.SeatDto;
+import com.example.cinema.pojo.responses.SeatResponse;
 
 import java.util.List;
 
 public interface SeatService {
-    List<SeatDto> getAllSeat(Long scheduleId, Long roomId);
+    List<SeatResponse> getSeatByScheduleId(Long scheduleId);
 }
