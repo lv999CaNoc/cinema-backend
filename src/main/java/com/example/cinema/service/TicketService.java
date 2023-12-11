@@ -12,4 +12,6 @@ public interface TicketService {
     List<TicketDto> create(BookingRequest bookingRequest, Bill bill) throws RuntimeException;
 
     List<TicketDto> getAllTicketByBill(Long id);
+
+    TicketDto getTicketByQRcode(String token);
 }

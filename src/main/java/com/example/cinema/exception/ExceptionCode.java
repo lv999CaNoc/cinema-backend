@@ -17,15 +17,20 @@ public enum ExceptionCode {
     PHONE_ALREADY_EXIST("409", "Phone Already Exist"),
     INVALID_CREDENTIALS("401", "Invalid Credentials"),
     MOVIE_NOT_FOUND("400", "Movie Not Found"),
+    USER_NOT_FOUND("400", "User Not Found"),
+    TICKET_NOT_FOUND("400", "Ticket Not Found"),
     MB_WEB_INVALID_PARAM("400", "Invalid Param"),
-    ROOM_NOT_FOUND("400","Room Not Found"),
+    ROOM_NOT_FOUND("400", "Room Not Found"),
     SCHEDULE_NOT_FOUND("400", "Schedule Not Found"),
     BILL_NOT_FOUND("400", "Bill Not Found"),
     SEAT_NOT_FOUND("400", "Seat Not Found"),
     SEAT_NOT_AVAIlABLE("400", "Seat Not Available, Someone Else Booked"),
+    INVALID_QR_CODE("402", "Invalid QR Code"),
+    QR_CODE_COMPROMISED("402", "QR code integrity compromised"),
 
     //5xx
-    INTERNAL_SERVER_ERROR("500", "Internal server error"),;
+    INTERNAL_SERVER_ERROR("500", "Internal server error"),
+    ;
     private final String code;
     private final String message;
 

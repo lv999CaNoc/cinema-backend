@@ -2,20 +2,23 @@ package com.example.cinema.service.impl;
 
 import com.example.cinema.exception.CinemaException;
 import com.example.cinema.exception.ExceptionCode;
-import com.example.cinema.pojo.dto.MovieDto;
 import com.example.cinema.pojo.dto.TicketDto;
-import com.example.cinema.pojo.entity.*;
+import com.example.cinema.pojo.entity.Bill;
+import com.example.cinema.pojo.entity.BillStatus;
+import com.example.cinema.pojo.entity.Seat;
+import com.example.cinema.pojo.entity.Ticket;
 import com.example.cinema.pojo.requests.BookingRequest;
 import com.example.cinema.repository.BillRepository;
 import com.example.cinema.repository.SeatRepository;
 import com.example.cinema.repository.TicketRepository;
+import com.example.cinema.repository.UserRepository;
 import com.example.cinema.service.ImgbbService;
 import com.example.cinema.service.QRCodeService;
 import com.example.cinema.service.TicketService;
 import com.google.zxing.WriterException;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -30,9 +33,11 @@ public class TicketServiceImpl implements TicketService {
     private SeatRepository seatRepository;
     private TicketRepository ticketRepository;
     private BillRepository billRepository;
+    private UserRepository userRepository;
 
     private QRCodeService qrCodeService;
     private ImgbbService uploadService;
+    private PasswordEncoder hashFunction;
 
     private ModelMapper modelMapper;
 
@@ -59,10 +64,21 @@ public class TicketServiceImpl implements TicketService {
             Seat seat = seatRepository.findById(seatId)
                     .orElseThrow(() -> new CinemaException(ExceptionCode.SEAT_NOT_FOUND));
 
+            Ticket ticketToCreate = Ticket.builder()
+                    .bill(bill)
+                    .seat(seat)
+                    .build();
+
+            Ticket ticketCreated = ticketRepository.save(ticketToCreate);
+
+            // QR code integrity
+            String UID = bill.getUser().getId().toString();
+            int TID = ticketCreated.getId();
+            String message = UID + TID;
+
+            String hash = hashFunction.encode(message);
             // generate and upload QR code
-            String qrContext = "UserID_" + bill.getUser().getId() +
-                    ".BillID_" + bill.getId() +
-                    ".SeatID_" + seatId;
+            String qrContext = UID + "$" + TID + "$" + hash;
             try {
                 byte[] imageBytes = qrCodeService.generateQRCodeImage(qrContext, 240, 240);
                 HttpResponse<String> response = uploadService.upload(imageBytes);
@@ -70,13 +86,8 @@ public class TicketServiceImpl implements TicketService {
                     String qrImageUrl = uploadService.getDisplayUrl(response.body());
                     System.out.println("Image uploaded successfully.\n");
 
-                    // save ticket
-                    Ticket ticketToCreate = Ticket.builder()
-                            .bill(bill)
-                            .seat(seat)
-                            .qrImageURL(qrImageUrl)
-                            .build();
-                    ticketRepository.save(ticketToCreate);
+                    ticketCreated.setQrImageURL(qrImageUrl);
+                    ticketRepository.save(ticketCreated);
                     tickets.add(modelMapper.map(ticketToCreate, TicketDto.class));
                 } else {
                     System.err.println("Failed to upload image. Status code: " + response.statusCode());
@@ -88,6 +99,37 @@ public class TicketServiceImpl implements TicketService {
         });
         return tickets;
     }
+
+    @Override
+    public TicketDto getTicketByQRcode(String token) {
+        String[] parts = token.split("\\$");
+
+        Long userId = Long.parseLong(parts[0]);
+        userRepository.findById(userId)
+                .orElseThrow(() -> new CinemaException(ExceptionCode.USER_NOT_FOUND));
+
+        Integer ticketId = Integer.parseInt(parts[1]);
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new CinemaException(ExceptionCode.TICKET_NOT_FOUND));
+
+        if (ticket.getBill().getUser().getId() != userId) {
+            // thông tin của QR không chính xác
+            throw new CinemaException(ExceptionCode.INVALID_QR_CODE);
+        }
+
+        int firstIndex = token.indexOf("$");
+        int secondIndex = token.indexOf("$", firstIndex + 1);
+        String hash = token.substring(secondIndex + 1);
+
+        String message = parts[0] + parts[1];
+        if (!hashFunction.matches(message, hash)) {
+            // thông tin của QR không đảm bảo tính toàn vẹn
+            throw new CinemaException(ExceptionCode.QR_CODE_COMPROMISED);
+        }
+
+        return mapToDTO(ticket);
+    }
+
     private TicketDto mapToDTO(Ticket ticket) {
         return modelMapper.map(ticket, TicketDto.class);
     }
