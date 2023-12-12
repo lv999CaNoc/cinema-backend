@@ -22,8 +22,8 @@ pipeline {
 
             steps {
                 withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                    sh 'docker build -t duchai28042002@gmail.com/springboot .'
-                    sh 'docker push duchai28042002@gmail.com/springboot'
+                    sh 'docker build -t duchai159/springboot .'
+                    sh 'docker push duchai159/springboot'
                 }
             }
         }
@@ -51,7 +51,7 @@ pipeline {
                 sh 'docker network create dev || echo "this network exists"'
                 sh 'echo y | docker container prune '
 
-                sh 'docker container run -d --rm --name cinema-springboot -p 8081:8080 --network dev duchai28042002@gmail.com/springboot'
+                sh 'docker container run -d --rm --name cinema-springboot -p 8081:8080 --network dev duchai159/springboot'
             }
         }
 
