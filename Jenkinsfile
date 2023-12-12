@@ -46,7 +46,7 @@ pipeline {
         stage('Deploy Spring Boot') {
             steps {
                 echo 'Deploying and cleaning'
-                sh 'docker image pull duchai28042002@gmail.com/springboot'
+                sh 'docker image pull duchai159/springboot'
                 sh 'docker container stop cinema-springboot || echo "this container does not exist" '
                 sh 'docker network create dev || echo "this network exists"'
                 sh 'echo y | docker container prune '
