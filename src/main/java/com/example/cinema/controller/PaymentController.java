@@ -15,6 +15,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ public class PaymentController {
     private BillRepository billRepository;
 
     @PostMapping("")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public ResponseEntity<String> payment(@NotNull @RequestBody OrderRequest order) {
         try {
             Payment payment = paypalService.createPayment(order.getPrice(), "USD", "paypal",
@@ -48,6 +50,7 @@ public class PaymentController {
 
 
     @GetMapping("/success")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public ResponseEntity<String> success(@RequestParam("bid") Long billId,
                                           @RequestParam("paymentId") String paymentId,
                                           @RequestParam("PayerID") String payerId) {
