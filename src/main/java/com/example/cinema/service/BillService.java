@@ -10,6 +10,5 @@ public interface BillService {
     @Transactional
     BillDto create(BookingRequest bookingRequest) throws RuntimeException;
 
-    List<BillDto> getAll();
-
+    List<BillDto> getAll(Long userId);
 }

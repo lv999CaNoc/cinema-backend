@@ -63,8 +63,7 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public List<BillDto> getAll() {
-        Long userId = authService.getUser().getId();
+    public List<BillDto> getAll(Long userId) {
         return billRepository.getAllByUserId(userId)
                 .stream()
                 .map(bill -> modelMapper.map(bill, BillDto.class))
