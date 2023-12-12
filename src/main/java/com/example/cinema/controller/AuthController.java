@@ -6,13 +6,10 @@ import com.example.cinema.pojo.requests.RegisterRequest;
 import com.example.cinema.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -30,5 +27,13 @@ public class AuthController {
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) throw new ValidationException(bindingResult);
         return authService.register(request);
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<?> verify(@RequestParam String token) {
+        if (authService.verifyEmail(token)) {
+            return ResponseEntity.ok("Verify success");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification failed: Invalid verification code");
     }
 }

@@ -3,17 +3,25 @@ package com.example.cinema.service.impl;
 import com.example.cinema.exception.CinemaException;
 import com.example.cinema.exception.ExceptionCode;
 import com.example.cinema.pojo.entity.Role;
+import com.example.cinema.pojo.entity.SecureToken;
 import com.example.cinema.pojo.entity.User;
 import com.example.cinema.pojo.requests.LoginRequest;
 import com.example.cinema.pojo.requests.RegisterRequest;
 import com.example.cinema.pojo.responses.AuthenticationResponse;
 import com.example.cinema.pojo.responses.BaseResponse;
 import com.example.cinema.repository.RoleRepository;
+import com.example.cinema.repository.SecureTokenRepository;
 import com.example.cinema.repository.UserRepository;
 import com.example.cinema.security.JwtTokenProvider;
 import com.example.cinema.service.AuthService;
-import lombok.AllArgsConstructor;
+import com.example.cinema.service.SecureTokenService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,24 +29,37 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    private JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
+    private final JavaMailSender mailSender;
+
+    private final SecureTokenService secureTokenService;
+
+    private final SecureTokenRepository secureTokenRepository;
+
+    @Value("${site.base.url}")
+    private String BASE_URL;
+
+    @Override
     public ResponseEntity<?> register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new CinemaException(ExceptionCode.USERNAME_ALREADY_EXIST);
@@ -54,13 +75,68 @@ public class AuthServiceImpl implements AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(roles)
                 .email(request.getEmail())
-                .isEnabled(true)
+                .isEnabled(false)
                 .build();
         userRepository.save(newUser);
-        AuthenticationResponse response = AuthenticationResponse.builder()
-                .token(jwtTokenProvider.generateToken(newUser))
-                .build();
-        return ResponseEntity.ok(BaseResponse.of(response));
+
+        try {
+            sendRegisterVerifyEmail(newUser);
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            throw new CinemaException(ExceptionCode.SEND_MAIL_ERROR);
+        }
+
+        String msg = "Register successfully! Check your email to verify your account.";
+        return ResponseEntity.ok(BaseResponse.of(msg));
+    }
+
+    @Override
+    public void sendRegisterVerifyEmail(User user)
+            throws MessagingException, UnsupportedEncodingException {
+        SecureToken secureToken = secureTokenService.createSecureToken();
+        secureToken.setUser(user);
+        secureTokenRepository.save(secureToken);
+
+        String toAddress = user.getEmail();
+        String subject = "[Cinema] Please verify your registration";
+        String content = "Dear [[name]],<br>"
+                + "Please click the link below to verify your registration:<br>"
+                + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
+                + "Thank you,<br>"
+                + "Cinema App.";
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        helper.setTo(toAddress);
+        helper.setSubject(subject);
+
+        content = content.replace("[[name]]", user.getUsername());
+        String verifyURL = BASE_URL + "/api/auth/verify?token=" + secureToken.getToken();
+
+        content = content.replace("[[URL]]", verifyURL);
+
+        helper.setText(content, true);
+
+        mailSender.send(message);
+    }
+
+    @Override
+    public boolean verifyEmail(String token) {
+        SecureToken secureToken = secureTokenService.findByToken(token);
+        if (Objects.isNull(secureToken) || secureToken.isExpired()) {
+            throw new CinemaException(ExceptionCode.INVALID_VERIFY_EMAIL_TOKEN);
+        }
+        Optional<User> user = userRepository.findById(secureToken.getUser().getId());
+        if (Objects.isNull(user)) {
+            return false;
+        }
+
+        User verifyUser = user.get();
+        verifyUser.setEnabled(true);
+        userRepository.save(verifyUser);
+
+        secureTokenService.removeToken(secureToken);
+        return true;
     }
 
     @Override

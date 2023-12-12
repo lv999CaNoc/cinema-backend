@@ -12,6 +12,7 @@ public enum ExceptionCode {
     UNSUPPORTED_JWT_TOKEN("403", "Unsupported JWT token"),
     JWT_EMPTY("403", "JWT claims string is empty"),
     EXPIRED_REFRESH_TOKEN("403", "Expired Refresh Token"),
+    INVALID_VERIFY_EMAIL_TOKEN("405", "Invalid verify email token"),
     USERNAME_ALREADY_EXIST("409", "Username Already Exist"),
     EMAIL_ALREADY_EXIST("409", "Email Already Exist"),
     PHONE_ALREADY_EXIST("409", "Phone Already Exist"),
@@ -30,6 +31,7 @@ public enum ExceptionCode {
 
     //5xx
     INTERNAL_SERVER_ERROR("500", "Internal server error"),
+    SEND_MAIL_ERROR("501", "Send mail error")
     ;
     private final String code;
     private final String message;
