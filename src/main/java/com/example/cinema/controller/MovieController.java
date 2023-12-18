@@ -12,7 +12,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/movies")
+@RequestMapping(value = "/api/movies", produces = {"application/json; charset=UTF-8"})
 @AllArgsConstructor
 public class MovieController {
     private MovieService movieService;
