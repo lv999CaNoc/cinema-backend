@@ -1,9 +1,12 @@
 package com.example.cinema.exception;
 
+import com.example.cinema.service.LoginAttemptService;
+import com.example.cinema.util.RequestUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.FieldError;
@@ -18,6 +21,8 @@ import java.util.List;
 @ControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
+    private final LoginAttemptService loginAttemptService;
+    private final RequestUtils requestUtils;
 //    @ExceptionHandler(ResourceNotFoundException.class)
 //    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(
 //            ResourceNotFoundException exception, WebRequest webRequest) {
@@ -59,6 +64,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CinemaException.class)
     public ResponseEntity<ErrorDetails> handleCinemaException(CinemaException exception, WebRequest webRequest) {
+        log.error("handleCinemaException: " + exception.getMessage());
         ErrorDetails errorDetails = ErrorDetails.builder()
                 .timestamp(LocalDateTime.now())
                 .message(exception.getExceptionCode().getMessage())
@@ -71,6 +77,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorDetails> handleAuthenticationException(AuthenticationException exception,
                                                                       WebRequest webRequest) {
+        if (exception instanceof BadCredentialsException) {
+            log.error("handleAuthenticationException: " + exception.getMessage());
+
+            loginAttemptService.loginFailed(requestUtils.getClientIP());
+        }
         ErrorDetails errorDetails = ErrorDetails.builder()
                 .timestamp(LocalDateTime.now())
                 .message(exception.getMessage())

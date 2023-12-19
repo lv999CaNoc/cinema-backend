@@ -28,11 +28,11 @@ public enum ExceptionCode {
     SEAT_NOT_AVAIlABLE("400", "Seat Not Available, Someone Else Booked"),
     INVALID_QR_CODE("402", "Invalid QR Code"),
     QR_CODE_COMPROMISED("402", "QR code integrity compromised"),
+    BLOCK_IP("411", "Block IP"),
 
     //5xx
     INTERNAL_SERVER_ERROR("500", "Internal server error"),
-    SEND_MAIL_ERROR("501", "Send mail error")
-    ;
+    SEND_MAIL_ERROR("501", "Send mail error");
     private final String code;
     private final String message;
 

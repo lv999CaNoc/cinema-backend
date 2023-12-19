@@ -16,7 +16,6 @@ public class TicketController {
 
     @GetMapping("/bills/{id}/tickets")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public BaseResponse getAllTicketByBill(@PathVariable Long id) {
         return BaseResponse.of(ticketService.getAllTicketByBill(id));
     }

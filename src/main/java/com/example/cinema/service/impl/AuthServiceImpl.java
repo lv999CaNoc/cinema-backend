@@ -14,7 +14,9 @@ import com.example.cinema.repository.SecureTokenRepository;
 import com.example.cinema.repository.UserRepository;
 import com.example.cinema.security.JwtTokenProvider;
 import com.example.cinema.service.AuthService;
+import com.example.cinema.service.LoginAttemptService;
 import com.example.cinema.service.SecureTokenService;
+import com.example.cinema.util.RequestUtils;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +56,9 @@ public class AuthServiceImpl implements AuthService {
     private final SecureTokenService secureTokenService;
 
     private final SecureTokenRepository secureTokenRepository;
+
+    private final RequestUtils requestUtils;
+    private final LoginAttemptService loginAttemptService;
 
     @Value("${site.base.url}")
     private String BASE_URL;
@@ -140,8 +145,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseEntity<?> login(LoginRequest request) {
+        String ip = requestUtils.getClientIP();
+        if (loginAttemptService.isBlocked(ip)) {
+            throw new CinemaException(ExceptionCode.BLOCK_IP);
+        }
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
+        loginAttemptService.loginSucceeded(ip);
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
         List<String> roles = authorities.stream()
@@ -163,4 +173,6 @@ public class AuthServiceImpl implements AuthService {
         }
         throw new CinemaException(ExceptionCode.UNAUTHORIZED);
     }
+
+
 }

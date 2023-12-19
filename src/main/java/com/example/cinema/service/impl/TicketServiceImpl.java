@@ -86,7 +86,10 @@ public class TicketServiceImpl implements TicketService {
                     String qrImageUrl = uploadService.getDisplayUrl(response.body());
                     System.out.println("Image uploaded successfully.\n");
 
+                    ticketCreated.setQrContext(qrContext);
                     ticketCreated.setQrImageURL(qrImageUrl);
+                    ticketCreated.setQrExpiration(bill.getSchedule().getStartDate().plusHours(2));
+
                     ticketRepository.save(ticketCreated);
                     tickets.add(modelMapper.map(ticketToCreate, TicketDto.class));
                 } else {

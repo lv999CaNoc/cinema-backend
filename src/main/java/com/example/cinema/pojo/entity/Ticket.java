@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.time.LocalDateTime;
+
 @Data
 @Table(name = "tickets")
 @Builder
@@ -21,14 +23,17 @@ public class Ticket {
 
     @Column(length = 2000)
     private String qrImageURL;
+    private String qrContext;
+    private LocalDateTime qrExpiration;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(nullable = false,name = "seat_id")
+    @JoinColumn(nullable = false, name = "seat_id")
     private Seat seat;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name="bill_id")
+    @JoinColumn(name = "bill_id")
     private Bill bill;
+
 }

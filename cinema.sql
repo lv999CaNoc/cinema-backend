@@ -1,34 +1,175 @@
---
--- Dumping data for table `bills`
---
-
-LOCK
-TABLES `bills` WRITE;
-/*!40000 ALTER TABLE `bills` DISABLE KEYS */;
-INSERT INTO `bills`
-VALUES (1, '2023-12-10 00:34:39.951956', 'BC9EZNC45RY4E', 'PAYID-MV2WB3Q6AX65103A9352141R',
-        '2023-12-10 13:56:49.979220', 0, 12, 3),
-       (2, '2023-12-10 00:38:23.112957', NULL, NULL, NULL, 1, 12, 3),
-       (3, '2023-12-10 00:50:12.543527', 'BC9EZNC45RY4E', 'PAYID-MV2KVPI8MB50787YR319564M',
-        '2023-12-10 00:59:10.754297', 0, 12, 3),
-       (4, '2023-12-10 01:00:30.556309', 'BC9EZNC45RY4E', 'PAYID-MV2KWRA03R61003UP4191612',
-        '2023-12-10 01:00:50.249282', 0, 12, 3),
-       (5, '2023-12-10 01:05:26.164948', 'BC9EZNC45RY4E', 'PAYID-MV2KY4A2SW74624845025319',
-        '2023-12-10 01:05:55.113936', 0, 12, 3),
-       (6, '2023-12-10 01:12:07.015800', 'BC9EZNC45RY4E', 'PAYID-MV2K36Y4XS68499VL0558153',
-        '2023-12-10 01:12:29.885416', 0, 12, 3),
-       (7, '2023-12-10 13:59:29.870594', NULL, NULL, NULL, 1, 14, 3);
-/*!40000 ALTER TABLE `bills` ENABLE KEYS */;
-UNLOCK
-TABLES;
+DROP SCHEMA IF EXISTS cinema;
+CREATE SCHEMA cinema DEFAULT CHARSET=utf8 COLLATE =utf8_bin;
+USE
+cinema;
 
 --
+-- Table structure
+--
+
+-- categories: table
+CREATE TABLE `categories`
+(
+    `id`   int(11) NOT NULL AUTO_INCREMENT,
+    `name` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- movies: table
+CREATE TABLE `movies`
+(
+    `id`                 int(11) NOT NULL AUTO_INCREMENT,
+    `actors`             varchar(255) COLLATE utf8_bin  DEFAULT NULL,
+    `banner_image_url`   varchar(1000) COLLATE utf8_bin DEFAULT NULL,
+    `description`        varchar(1000) COLLATE utf8_bin DEFAULT NULL,
+    `director`           varchar(255) COLLATE utf8_bin  DEFAULT NULL,
+    `duration`           int(11) DEFAULT NULL,
+    `end_date`           datetime(6) DEFAULT NULL,
+    `like_percentage`    double                        NOT NULL,
+    `movie_image_url`    varchar(1000) COLLATE utf8_bin DEFAULT NULL,
+    `rated`              tinyint(4) DEFAULT NULL,
+    `release_date`       datetime(6) DEFAULT NULL,
+    `revenue_percentage` double                        NOT NULL,
+    `title`              varchar(255) COLLATE utf8_bin NOT NULL,
+    `trailer_url`        varchar(1000) COLLATE utf8_bin DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- roles: table
+CREATE TABLE `roles`
+(
+    `id`   bigint(20) NOT NULL AUTO_INCREMENT,
+    `name` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- movie_categories: table
+CREATE TABLE `movie_categories`
+(
+    `movie_id`    int(11) NOT NULL,
+    `category_id` int(11) NOT NULL,
+    PRIMARY KEY (`movie_id`, `category_id`),
+    KEY           `FKji237md2db8k3qxs2tnful90p` (`category_id`),
+    CONSTRAINT `FK6uxga0em0k1x5c6ft1g9q7xi6` FOREIGN KEY (`movie_id`) REFERENCES `movies` (`id`),
+    CONSTRAINT `FKji237md2db8k3qxs2tnful90p` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- users: table
+CREATE TABLE `users`
+(
+    `id`       bigint(20) NOT NULL AUTO_INCREMENT,
+    `email`    varchar(255) COLLATE utf8_bin NOT NULL,
+    `enabled`  bit(1)                        NOT NULL,
+    `locked`   bit(1)                        NOT NULL,
+    `password` varchar(255) COLLATE utf8_bin NOT NULL,
+    `username` varchar(20) COLLATE utf8_bin  NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `UK_r43af9ap4edm43mmtq01oddj6` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- users_roles: table
+CREATE TABLE `users_roles`
+(
+    `user_id` bigint(20) NOT NULL,
+    `role_id` bigint(20) NOT NULL,
+    PRIMARY KEY (`user_id`, `role_id`),
+    KEY       `FKj6m8fwv7oqv74fcehir1a9ffy` (`role_id`),
+    CONSTRAINT `FK2o0jvgh89lemvvo17cbqvdxaa` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+    CONSTRAINT `FKj6m8fwv7oqv74fcehir1a9ffy` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- theaters: table
+CREATE TABLE `theaters`
+(
+    `id`           int(11) NOT NULL AUTO_INCREMENT,
+    `address`      varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `city`         varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `name`         varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `phone_number` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `user_id`      bigint(20) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `UK_mgrjxx4qxedjhu9fdejlybodd` (`user_id`),
+    CONSTRAINT `FK5qj4s3mxnbjx8s8ijgurxd6o4` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- rooms: table
+CREATE TABLE `rooms`
+(
+    `id`         int(11) NOT NULL AUTO_INCREMENT,
+    `capacity`   int(11) DEFAULT NULL,
+    `name`       varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `theater_id` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY          `FKt7g1iqlhb3rbe8ny47qbq22a7` (`theater_id`),
+    CONSTRAINT `FKt7g1iqlhb3rbe8ny47qbq22a7` FOREIGN KEY (`theater_id`) REFERENCES `theaters` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- schedules: table
+CREATE TABLE `schedules`
+(
+    `id`         bigint(20) NOT NULL AUTO_INCREMENT,
+    `price`      double NOT NULL,
+    `start_date` datetime(6) DEFAULT NULL,
+    `movie_id`   int(11) NOT NULL,
+    `room_id`    int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY          `FKrn994bufm9lvyguq5enr8pua2` (`movie_id`),
+    KEY          `FK34r5t4jexlcas19pleifb8ihv` (`room_id`),
+    CONSTRAINT `FK34r5t4jexlcas19pleifb8ihv` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `FKrn994bufm9lvyguq5enr8pua2` FOREIGN KEY (`movie_id`) REFERENCES `movies` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- seats: table
+CREATE TABLE `seats`
+(
+    `id`      bigint(20) NOT NULL AUTO_INCREMENT,
+    `name`    varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `room_id` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY       `FKg993pi7ucgy616icmddq8u335` (`room_id`),
+    CONSTRAINT `FKg993pi7ucgy616icmddq8u335` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- secure_token: table
+CREATE TABLE `secure_token`
+(
+    `id`          bigint(20) NOT NULL AUTO_INCREMENT,
+    `expire_at`   datetime(6) NOT NULL,
+    `timestamp`   datetime(6) DEFAULT NULL,
+    `token`       varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `customer_id` bigint(20) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `UK_1vnojtqwxyii8kinnsohdknhw` (`token`),
+    KEY           `FKpaak2cyuxy1xhesnq283afmux` (`customer_id`),
+    CONSTRAINT `FKpaak2cyuxy1xhesnq283afmux` FOREIGN KEY (`customer_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+-- bills: table
+CREATE TABLE `bills`
+(
+    `id`           bigint(20) NOT NULL AUTO_INCREMENT,
+    `created_time` datetime(6) DEFAULT NULL,
+    `payerid`      varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `payment_id`   varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `payment_time` datetime(6) DEFAULT NULL,
+    `status`       tinyint(4) DEFAULT NULL,
+    `schedule_id`  bigint(20) NOT NULL,
+    `user_id`      bigint(20) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY            `FK52x0moconqs12lspvfsqwkwp` (`schedule_id`),
+    KEY            `FKk8vs7ac9xknv5xp18pdiehpp1` (`user_id`),
+    CONSTRAINT `FK52x0moconqs12lspvfsqwkwp` FOREIGN KEY (`schedule_id`) REFERENCES `schedules` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `FKk8vs7ac9xknv5xp18pdiehpp1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+-- Data
+
+
 -- Dumping data for table `categories`
 --
 
-LOCK
-TABLES `categories` WRITE;
-/*!40000 ALTER TABLE `categories` DISABLE KEYS */;
 INSERT INTO `categories`
 VALUES (2, 'Khoa học viễn tưởng'),
        (6, 'Hành động'),
@@ -40,50 +181,11 @@ VALUES (2, 'Khoa học viễn tưởng'),
        (13, 'Khoa học'),
        (14, 'Giả tưởng'),
        (15, 'Tội phạm');
-/*!40000 ALTER TABLE `categories` ENABLE KEYS */;
-UNLOCK
-TABLES;
-
---
--- Dumping data for table `movie_categories`
---
-
-LOCK
-TABLES `movie_categories` WRITE;
-/*!40000 ALTER TABLE `movie_categories` DISABLE KEYS */;
-INSERT INTO `movie_categories`
-VALUES (6, 2),
-       (3, 6),
-       (4, 6),
-       (6, 6),
-       (10, 6),
-       (6, 7),
-       (10, 7),
-       (7, 9),
-       (5, 10),
-       (11, 10),
-       (12, 11),
-       (1, 12),
-       (2, 12),
-       (7, 12),
-       (8, 12),
-       (9, 12),
-       (10, 12),
-       (2, 14),
-       (3, 14),
-       (4, 14),
-       (8, 14);
-/*!40000 ALTER TABLE `movie_categories` ENABLE KEYS */;
-UNLOCK
-TABLES;
 
 --
 -- Dumping data for table `movies`
 --
 
-LOCK
-TABLES `movies` WRITE;
-/*!40000 ALTER TABLE `movies` DISABLE KEYS */;
 INSERT INTO `movies`
 VALUES (1, 'Mizuta Wasabi, Megumi Oohara',
         'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202305/11117_105_100008.jpg',
@@ -157,28 +259,62 @@ VALUES (1, 'Mizuta Wasabi, Megumi Oohara',
        (12, '1', '', '1', '1', 100, '2024-09-27 00:00:00.000000', 0,
         'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202306/11188_103_100001.jpg', 0,
         '2024-01-27 00:00:00.000000', 0, 'Ngày xưa có một chuyện tình', '');
-/*!40000 ALTER TABLE `movies` ENABLE KEYS */;
-UNLOCK
-TABLES;
+
+--
+-- Dumping data for table `movie_categories`
+--
+
+INSERT INTO `movie_categories`
+VALUES (6, 2),
+       (3, 6),
+       (4, 6),
+       (6, 6),
+       (10, 6),
+       (6, 7),
+       (10, 7),
+       (7, 9),
+       (5, 10),
+       (11, 10),
+       (12, 11),
+       (1, 12),
+       (2, 12),
+       (7, 12),
+       (8, 12),
+       (9, 12),
+       (10, 12),
+       (2, 14),
+       (3, 14),
+       (4, 14),
+       (8, 14);
+
 
 --
 -- Dumping data for table `roles`
 --
 
-LOCK
-TABLES `roles` WRITE;
-/*!40000 ALTER TABLE `roles` DISABLE KEYS */;
-/*!40000 ALTER TABLE `roles` ENABLE KEYS */;
-UNLOCK
-TABLES;
+INSERT INTO `roles`
+VALUES (1, 'ROLE_USER'),
+       (2, 'ROLE_MANAGER');
+
+insert into `users` (id, email, enabled, locked, password, username)
+values (1, 'admin_ha_dong@gmail.com', true, false, '$2a$10$LWv1K/4YNJsCrnqMelldwuTYYOqvFbMnlDs5wKhx45fczrCEEF3IK',
+        'admin_ha_dong'),
+       (2, 'admin_thu_duc@gmail.com', true, false, '$2a$10$eXsl44h416nM67Knox7KK.XkO71sXRa05TII245bu4deNt11lEoK.',
+        'admin_thu_duc');
+
+--
+-- Dumping data for table `theaters`
+--
+
+INSERT INTO `theaters`
+VALUES (1, 'Tầng 4, Mê Linh Plaza Hà Đông, Đ. Tô Hiệu, Q. Hà Đông', 'Hà Nội', 'CINEMA Hà Đông', '0938473829', 1),
+       (2, '216 Đ. Võ Văn Ngân, Bình Thọ, Thủ Đức', 'Hồ Chí Minh', 'CINEMA Thủ Đức', '1902006017', 2);
 
 --
 -- Dumping data for table `rooms`
 --
 
-LOCK
-TABLES `rooms` WRITE;
-/*!40000 ALTER TABLE `rooms` DISABLE KEYS */;
+
 INSERT INTO `rooms`
 VALUES (1, 98, 'Phòng 101', 1),
        (2, 98, 'Phòng 102', 1),
@@ -186,59 +322,49 @@ VALUES (1, 98, 'Phòng 101', 1),
        (4, 98, 'Phòng 101', 2),
        (5, 98, 'Phòng 102', 2),
        (6, 98, 'Phòng 103', 2);
-/*!40000 ALTER TABLE `rooms` ENABLE KEYS */;
-UNLOCK
-TABLES;
+
 
 --
 -- Dumping data for table `schedules`
 --
 
-LOCK
-TABLES `schedules` WRITE;
-/*!40000 ALTER TABLE `schedules` DISABLE KEYS */;
 INSERT INTO `schedules`
-VALUES (12, 45000, '2023-12-10 08:45:00.000000', 1, 1),
-       (13, 50000, '2023-12-10 11:15:00.000000', 1, 2),
-       (14, 55000, '2023-12-10 14:15:00.000000', 1, 3),
-       (15, 55000, '2023-12-10 16:45:00.000000', 1, 4),
-       (16, 50000, '2023-12-10 19:00:00.000000', 1, 5),
-       (17, 40000, '2023-12-10 22:15:00.000000', 1, 6),
-       (18, 45000, '2023-12-11 08:45:00.000000', 1, 1),
-       (19, 50000, '2023-12-11 11:15:00.000000', 1, 2),
-       (20, 55000, '2023-12-11 14:15:00.000000', 1, 3),
-       (21, 55000, '2023-12-11 16:45:00.000000', 1, 4),
-       (22, 50000, '2023-12-11 19:00:00.000000', 1, 5),
-       (23, 40000, '2023-12-11 22:15:00.000000', 1, 6),
-       (24, 45000, '2023-12-12 08:45:00.000000', 1, 1),
-       (25, 50000, '2023-12-12 11:15:00.000000', 1, 2),
-       (26, 55000, '2023-12-12 14:15:00.000000', 1, 3),
-       (27, 55000, '2023-12-12 16:45:00.000000', 1, 4),
-       (28, 50000, '2023-12-12 19:00:00.000000', 1, 5),
-       (29, 40000, '2023-12-12 22:15:00.000000', 1, 6),
-       (30, 45000, '2023-12-13 08:45:00.000000', 1, 1),
-       (31, 50000, '2023-12-13 11:15:00.000000', 1, 2),
-       (32, 55000, '2023-12-13 14:15:00.000000', 1, 3),
-       (33, 55000, '2023-12-13 16:45:00.000000', 1, 4),
-       (34, 50000, '2023-12-13 19:00:00.000000', 1, 5),
-       (35, 40000, '2023-12-13 22:15:00.000000', 1, 6),
-       (36, 45000, '2023-12-14 08:45:00.000000', 1, 1),
-       (37, 50000, '2023-12-14 11:15:00.000000', 1, 2),
-       (38, 55000, '2023-12-14 14:15:00.000000', 1, 3),
-       (39, 55000, '2023-12-14 16:45:00.000000', 1, 4),
-       (40, 50000, '2023-12-14 19:00:00.000000', 1, 5),
-       (41, 40000, '2023-12-14 22:15:00.000000', 1, 6);
-/*!40000 ALTER TABLE `schedules` ENABLE KEYS */;
-UNLOCK
-TABLES;
+VALUES (12, 45000, '2023-12-18 08:45:00.000000', 1, 1),
+       (13, 50000, '2023-12-18 11:15:00.000000', 1, 2),
+       (14, 55000, '2023-12-18 14:15:00.000000', 1, 3),
+       (15, 55000, '2023-12-18 16:45:00.000000', 1, 4),
+       (16, 50000, '2023-12-18 19:00:00.000000', 1, 5),
+       (17, 40000, '2023-12-18 22:15:00.000000', 1, 6),
+       (18, 45000, '2023-12-19 08:45:00.000000', 1, 1),
+       (19, 50000, '2023-12-19 11:15:00.000000', 1, 2),
+       (20, 55000, '2023-12-19 14:15:00.000000', 1, 3),
+       (21, 55000, '2023-12-19 16:45:00.000000', 1, 4),
+       (22, 50000, '2023-12-19 19:00:00.000000', 1, 5),
+       (23, 40000, '2023-12-19 22:15:00.000000', 1, 6),
+       (24, 45000, '2023-12-20 08:45:00.000000', 1, 1),
+       (25, 50000, '2023-12-20 11:15:00.000000', 1, 2),
+       (26, 55000, '2023-12-20 14:15:00.000000', 1, 3),
+       (27, 55000, '2023-12-20 16:45:00.000000', 1, 4),
+       (28, 50000, '2023-12-20 19:00:00.000000', 1, 5),
+       (29, 40000, '2023-12-20 22:15:00.000000', 1, 6),
+       (30, 45000, '2023-12-21 08:45:00.000000', 1, 1),
+       (31, 50000, '2023-12-21 11:15:00.000000', 1, 2),
+       (32, 55000, '2023-12-21 14:15:00.000000', 1, 3),
+       (33, 55000, '2023-12-21 16:45:00.000000', 1, 4),
+       (34, 50000, '2023-12-21 19:00:00.000000', 1, 5),
+       (35, 40000, '2023-12-21 22:15:00.000000', 1, 6),
+       (36, 45000, '2023-12-22 08:45:00.000000', 1, 1),
+       (37, 50000, '2023-12-22 11:15:00.000000', 1, 2),
+       (38, 55000, '2023-12-22 14:15:00.000000', 1, 3),
+       (39, 55000, '2023-12-22 16:45:00.000000', 1, 4),
+       (40, 50000, '2023-12-22 19:00:00.000000', 1, 5),
+       (41, 40000, '2023-12-22 22:15:00.000000', 1, 6);
+
 
 --
 -- Dumping data for table `seats`
 --
 
-LOCK
-TABLES `seats` WRITE;
-/*!40000 ALTER TABLE `seats` DISABLE KEYS */;
 INSERT INTO `seats`
 VALUES (1, 'A1', 1),
        (2, 'A2', 1),
@@ -828,83 +954,5 @@ VALUES (1, 'A1', 1),
        (586, 'G12', 6),
        (587, 'G13', 6),
        (588, 'G14', 6);
-/*!40000 ALTER TABLE `seats` ENABLE KEYS */;
-UNLOCK
-TABLES;
 
---
--- Dumping data for table `theaters`
---
 
-LOCK
-TABLES `theaters` WRITE;
-/*!40000 ALTER TABLE `theaters` DISABLE KEYS */;
-INSERT INTO `theaters`
-VALUES (1, 'Tầng 4, Mê Linh Plaza Hà Đông, Đ. Tô Hiệu, Q. Hà Đông', 'Hà Nội', 'CINEMA Hà Đông', '0938473829', 1),
-       (2, '216 Đ. Võ Văn Ngân, Bình Thọ, Thủ Đức', 'Hồ Chí Minh', 'CINEMA Thủ Đức', '1902006017', 2);
-/*!40000 ALTER TABLE `theaters` ENABLE KEYS */;
-UNLOCK
-TABLES;
-
---
--- Dumping data for table `tickets`
---
-
-LOCK
-TABLES `tickets` WRITE;
-/*!40000 ALTER TABLE `tickets` DISABLE KEYS */;
-INSERT INTO `tickets`
-VALUES (1, 'https://i.ibb.co/v4Lj45b/ac4c2a7be4ad.png', 1, 1),
-       (2, 'https://i.ibb.co/s2KQbB1/f4904d126b12.png', 2, 2),
-       (3, 'https://i.ibb.co/t2f2drH/6eb830e6aceb.png', 3, 3),
-       (4, 'https://i.ibb.co/47SMvY1/7a30f2fd3ff4.png', 3, 4),
-       (5, 'https://i.ibb.co/2jcKpkF/dc90d1a23c0c.png', 4, 5),
-       (6, 'https://i.ibb.co/yYwLg3Y/2aadffee95e7.png', 4, 6),
-       (7, 'https://i.ibb.co/hWdhZXb/ae7b0e0499da.png', 5, 7),
-       (8, 'https://i.ibb.co/nBjBD8L/07867dc683f4.png', 6, 8),
-       (9, 'https://i.ibb.co/dkDD7dX/09968e73610e.png', 7, 197);
-/*!40000 ALTER TABLE `tickets` ENABLE KEYS */;
-UNLOCK
-TABLES;
-
---
--- Dumping data for table `users`
---
-
-LOCK
-TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users`
-VALUES (1, 'admin_ha_dong@gmail.com', _binary '', _binary '\0',
-        '$2a$10$LWv1K/4YNJsCrnqMelldwuTYYOqvFbMnlDs5wKhx45fczrCEEF3IK', 'admin_ha_dong'),
-       (2, 'admin_thu_duc@gmail.com', _binary '', _binary '\0',
-        '$2a$10$eXsl44h416nM67Knox7KK.XkO71sXRa05TII245bu4deNt11lEoK.', 'admin_thu_duc'),
-       (3, 'hongduc@gmail.com', _binary '', _binary '\0',
-        '$2a$10$eV8szMETF9ZKjzGJGAk3WO33j4wSV7QFpj/poQPZ2Upfx/JNRLzYC', 'hongduc2002'),
-       (4, 'duchai2002@gmail.com', _binary '', _binary '\0',
-        '$2a$10$q46/MUtOzlGd2LpnXV6p2u51f2O5fjs7vA.twHJFFrd8B0K0R0mi.', 'duchai2002');
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK
-TABLES;
-
---
--- Dumping data for table `users_roles`
---
-
-LOCK
-TABLES `users_roles` WRITE;
-/*!40000 ALTER TABLE `users_roles` DISABLE KEYS */;
-/*!40000 ALTER TABLE `users_roles` ENABLE KEYS */;
-UNLOCK
-TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2023-12-10 22:30:28
