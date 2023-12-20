@@ -50,7 +50,6 @@ public class PaymentController {
 
 
     @GetMapping("/success")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public ResponseEntity<String> success(@RequestParam("bid") Long billId,
                                           @RequestParam("paymentId") String paymentId,
                                           @RequestParam("PayerID") String payerId) {

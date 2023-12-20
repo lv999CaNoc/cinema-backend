@@ -20,7 +20,7 @@ public class BillCleanup {
     @Scheduled(fixedRate = 2 * 60000)
     public void billCleanupTask() {
         System.out.println("BillCleanup: Cleanup Bill running...");
-        LocalDateTime fiveMinutesAgo = LocalDateTime.now().minusMinutes(5);
+        LocalDateTime fiveMinutesAgo = LocalDateTime.now().minusMinutes(30);
         List<Bill> expiredBills = billRepository.findByCreatedTimeBeforeAndStatus(fiveMinutesAgo, BillStatus.PENDING.ordinal());
         for (Bill bill : expiredBills) {
             bill.setStatus(BillStatus.CANCEL);
