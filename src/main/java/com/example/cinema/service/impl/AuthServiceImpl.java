@@ -33,6 +33,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -150,18 +151,24 @@ public class AuthServiceImpl implements AuthService {
         if (loginAttemptService.isBlocked(ip)) {
             throw new CinemaException(ExceptionCode.BLOCK_IP);
         }
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
         loginAttemptService.loginSucceeded(ip);
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
+        Object principal = authentication.getPrincipal();
+        User user = (User) principal;
+
+        Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
         List<String> roles = authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
+        LocalDateTime dob = user.getDayOfBirth();
         AuthenticationResponse authResponse = AuthenticationResponse.builder()
                 .token(jwtTokenProvider.generateToken(authentication))
                 .roles(roles)
+                .dayOfBirth(dob)
                 .build();
         return ResponseEntity.ok(BaseResponse.of(authResponse));
     }

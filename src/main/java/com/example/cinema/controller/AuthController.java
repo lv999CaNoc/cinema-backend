@@ -26,7 +26,6 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) throw new ValidationException(bindingResult);
-        System.out.println(request.getDayOfBirth());
         return authService.register(request);
     }
 
