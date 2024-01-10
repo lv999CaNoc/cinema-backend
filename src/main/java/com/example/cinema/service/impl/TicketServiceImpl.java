@@ -106,8 +106,13 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public TicketDto getTicketByQRcode(String token) {
         String[] parts = token.split("\\$");
+        Long userId = 0L;
+        try {
+            userId = Long.parseLong(parts[0]);
+        } catch (NumberFormatException e) {
+            throw new CinemaException(ExceptionCode.INVALID_QR_CODE);
+        }
 
-        Long userId = Long.parseLong(parts[0]);
         userRepository.findById(userId)
                 .orElseThrow(() -> new CinemaException(ExceptionCode.USER_NOT_FOUND));
 

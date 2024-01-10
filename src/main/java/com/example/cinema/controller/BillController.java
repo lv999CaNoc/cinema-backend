@@ -32,7 +32,7 @@ public class BillController {
     }
 
     @GetMapping("")
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_MANAGER')")
     public ResponseEntity<?> getAllBillByUser() {
         User user = authService.getUser();
         List<BillDto> bills = billService.getAll(user.getId());
